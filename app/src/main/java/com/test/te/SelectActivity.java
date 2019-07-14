@@ -146,10 +146,11 @@ public class SelectActivity extends AppCompatActivity {
                 if (!data.equals("<#")) {
                     String result = null;
                     try {
-                        result = infoUtils.sendData(data, null);
-                        if (result.contains("*LOGINOK#")) {
+                        result = infoUtils.sendData(data, null,null);
+                        if (result.contains("&")) {
                             for (int i = 0; i < Data.devices.size(); i++) {
                                 Data.devices.get(i).setSocket(infoUtils.getSocket());
+                                Data.devices.get(i).setPosition(infoUtils.getPosition());
                             }
                             Message m = new Message();
                             m.what = 2;//连接成功
@@ -201,8 +202,8 @@ public class SelectActivity extends AppCompatActivity {
                                             InfoUtils infoUtils = new InfoUtils();
                                             String result = null;
                                             try {
-                                                result = infoUtils.sendData("<" + id + "&" + pw + "#", null);
-                                                if (result.contains("*LOGINOK#")) {
+                                                result = infoUtils.sendData("<" + id + "&" + pw + "#", null,null);
+                                                if (result.contains("&")) {
                                                     ContentValues values = new ContentValues();
                                                     values.put("deviceID", id);
                                                     values.put("devicePW", pw);
@@ -215,7 +216,7 @@ public class SelectActivity extends AppCompatActivity {
                                                     Message m = new Message();
                                                     m.what = 0;//验证成功
                                                     handler.sendMessage(m);
-                                                } else if (result.contains("*LOGINNO#")) {
+                                                } {
                                                     Message m = new Message();
                                                     m.what = -1;//验证失败
                                                     handler.sendMessage(m);

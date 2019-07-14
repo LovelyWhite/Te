@@ -49,7 +49,8 @@
             android:text="远程控制"
             android:textSize="19sp" />
 
-        <TextView
+        <Button
+            android:id="@+id/start"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
@@ -59,9 +60,10 @@
             android:background="@drawable/input_white_radius"
             android:gravity="left"
             android:text="启动"
-            android:textSize="19sp" />
+            android:textSize="14sp" />
 
-        <TextView
+        <Button
+            android:id="@+id/stop"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
@@ -71,9 +73,10 @@
             android:background="@drawable/input_white_radius"
             android:gravity="left"
             android:text="停机"
-            android:textSize="19sp" />
+            android:textSize="14sp" />
 
-        <TextView
+        <Button
+            android:id="@+id/restore"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
@@ -83,6 +86,6 @@
             android:background="@drawable/input_white_radius"
             android:gravity="left"
             android:text="报警复位"
-            android:textSize="19sp" />
+            android:textSize="14sp" />
     </LinearLayout>
 </FrameLayout>

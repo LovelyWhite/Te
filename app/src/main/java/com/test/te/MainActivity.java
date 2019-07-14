@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
@@ -15,19 +14,18 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.test.te.model.Alert;
-import com.test.te.model.CValue;
-import com.test.te.model.Device;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Vector;
 
 public class MainActivity extends AppCompatActivity {
 
     private String preTag = null;
+    RemoteRSV remoteRSV = new RemoteRSV();
+    RealTimeData realTimeData = new RealTimeData();
+    RemoteControl remoteControl = new RemoteControl();
+    AlarmRecord alarmRecord = new AlarmRecord();
+    HistoricalCurve historicalCurve = new HistoricalCurve();
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -58,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
     };
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,35 +90,31 @@ public class MainActivity extends AppCompatActivity {
             else
             {
                 String b =  Data.devices.get(Data.cDevicePosition).getDeviceID().split("-")[0];
-                System.out.println(b);
-                x = Data.getAccess(b+"ParameterTable.mdb");
+                Toast.makeText(MainActivity.this,"正在加载数据",Toast.LENGTH_LONG).show();
+                Data.CopyAssets(this);
+                x = Data.getAccess(b+"parameterTable.mdb");
+                long now = System.currentTimeMillis();
+                while (System.currentTimeMillis()-now<15000&& !x) {
+                }
+                if(x)
+                {
+                    Toast.makeText(MainActivity.this,"数据加载成功",Toast.LENGTH_LONG).show();
+                    //创建Fragments并默认显示realtimeDATA
+                    buildFragments();
+                    Data.mainActivity = this;
+                }
+                else
+                {
+                    Toast.makeText(MainActivity.this,"数据加载失败，请检查文件",Toast.LENGTH_LONG).show();
+                    finish();
+                }
+
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Toast.makeText(MainActivity.this,"正在加载数据",Toast.LENGTH_LONG).show();
-        long now = System.currentTimeMillis();
-        while (System.currentTimeMillis()-now<15000&& !x) {
 
-        }
-        if(x)
-        {
-            Toast.makeText(MainActivity.this,"数据加载成功",Toast.LENGTH_LONG).show();
-        }
-        else
-        {
-            Toast.makeText(MainActivity.this,"数据加载失败，请检查文件",Toast.LENGTH_LONG).show();
-            finish();
-        }
-        //创建Fragments并默认显示realtimeDATA
-        buildFragments();
-        Data.mainActivity = this;
     }
-    RemoteRSV remoteRSV = new RemoteRSV();
-    RealTimeData realTimeData = new RealTimeData();
-    RemoteControl remoteControl = new RemoteControl();
-    AlarmRecord alarmRecord = new AlarmRecord();
-    HistoricalCurve historicalCurve = new HistoricalCurve();
     void buildFragments() {
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.frameLayout, realTimeData, "realTimeData")

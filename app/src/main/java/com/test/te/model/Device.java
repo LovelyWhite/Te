@@ -6,6 +6,7 @@ public class Device {
     Socket socket;
     String deviceID;
     String devicePW;
+    String position;
 
     public Socket getSocket() {
         return socket;
@@ -29,5 +30,13 @@ public class Device {
 
     public void setDevicePW(String devicePW) {
         this.devicePW = devicePW;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
     }
 }

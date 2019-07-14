@@ -136,7 +136,9 @@ public class ValueListAdapter extends BaseAdapter {
                             @Override
                             public void run() {
                                 try {
-                                    String result = infoUtils.sendData(">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getAddress() + "0001#", Data.devices.get(Data.cDevicePosition).getSocket());
+                                    String result = infoUtils.sendData(">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getAddress() + "0001#"
+                                            , Data.devices.get(Data.cDevicePosition).getSocket()
+                                            ,Data.devices.get(Data.cDevicePosition).getPosition());
                                     result = result==null?"":result;
                                     if (result.contains("Drive No online")) {
                                         Message m = new Message();
@@ -194,12 +196,21 @@ public class ValueListAdapter extends BaseAdapter {
                                         } else if (value.length() == 3) {
                                             value = "0" + value;
                                         }
-                                        String result = infoUtils.sendData(">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "06" + Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getAddress() + value + "#", Data.devices.get(Data.cDevicePosition).getSocket());
+                                        String result = infoUtils.sendData(">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "06" + Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getAddress() + value + "#"
+                                                , Data.devices.get(Data.cDevicePosition).getSocket()
+                                                , Data.devices.get(Data.cDevicePosition).getPosition());
 
                                         if(result==null)
                                         {
                                             Message m = new Message();
                                             m.what = -3;
+                                            handler.sendMessage(m);
+                                        }
+                                        else if(result.contains("Drive No online"))
+                                        {
+                                            finalHolder.cValue.setText("");
+                                            Message m = new Message();
+                                            m.what = -2;
                                             handler.sendMessage(m);
                                         }
                                         else

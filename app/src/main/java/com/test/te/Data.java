@@ -16,7 +16,9 @@ import com.test.te.model.Device;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -129,17 +131,46 @@ public class Data {
          e.printStackTrace();
       }
    }
-   static boolean getAccess(String fileName)
-   {
-      try
-      {
-         File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/Devices");
+   static void CopyAssets(Context context) {
+      try {
+         File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/Te_Devices");
          if (!file.exists())
          {
             file.mkdirs();
          }
+         String fileNames[] = context.getAssets().list("data");
+         for (String fileName : fileNames) {
+            InputStream is = context.getAssets().open("data/"+fileName);
+            System.out.println(file.getPath()+fileName);
+            File f = new File(file.getPath()+"/"+fileName);
+            if(f.exists())
+            {
+               continue;
+            }
+            else {
+               FileOutputStream fos = new FileOutputStream(f);
+               byte[] buffer = new byte[10240];
+               int byteCount = 0;
+               while ((byteCount = is.read(buffer)) != -1) {// 循环从输入流读取
+                  // buffer字节
+                  fos.write(buffer, 0, byteCount);// 将读取的输入流写入到输出流
+               }
+               fos.flush();// 刷新缓冲区
+               fos.close();
+            }
+            is.close();
+         }
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+   }
+   static boolean getAccess(String fileName)
+   {
+      try
+      {
          Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
-         Connection conn = DriverManager.getConnection("jdbc:ucanaccess://"+ Environment.getExternalStorageDirectory().getAbsolutePath()+"/Devices/"+fileName,"","hngddqxy67758837");
+
+         Connection conn = DriverManager.getConnection("jdbc:ucanaccess://"+Environment.getExternalStorageDirectory().getAbsolutePath()+"/Te_Devices/"+fileName,"","hngddqxy67758837");
          DatabaseMetaData dbmd = conn.getMetaData();
          Statement s = conn.createStatement();
          ResultSet  ddrs=dbmd.getTables(null,null,"%",null);
@@ -169,7 +200,7 @@ public class Data {
                      allpCode.add(cValue);
                   }
                }
-               String f = ddrs.getString(3).substring(13,15);
+               String f = ddrs.getString(3).substring(13,15).replace("P","F");
                tableList.add(f);
                dataLists.put(f,cs);
             }
@@ -181,6 +212,7 @@ public class Data {
       }
       catch (Exception e)
       {
+         e.printStackTrace();
          return false;
       }
    }

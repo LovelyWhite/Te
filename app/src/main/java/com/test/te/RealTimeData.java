@@ -84,11 +84,11 @@ public class RealTimeData extends Fragment {
                 while (true) {
                     try {
                         //输出频率
-                        c = infoUtils.sendData(">" + deviceId + "&" + "03" + "10010001#", Data.devices.get(Data.cDevicePosition).getSocket());
+                        c = infoUtils.sendData(">" + deviceId + "&" + "03" + "10010001#", Data.devices.get(Data.cDevicePosition).getSocket(),null);
                         //输出电流
-                        d = infoUtils.sendData(">" + deviceId + "&" + "03" + "10030001#", Data.devices.get(Data.cDevicePosition).getSocket());
+                        d = infoUtils.sendData(">" + deviceId + "&" + "03" + "10030001#", Data.devices.get(Data.cDevicePosition).getSocket(),null);
                         //输出电压
-                        e = infoUtils.sendData(">" + deviceId + "&" + "03" + "100A0001#", Data.devices.get(Data.cDevicePosition).getSocket());
+                        e = infoUtils.sendData(">" + deviceId + "&" + "03" + "100A0001#", Data.devices.get(Data.cDevicePosition).getSocket(),null);
                         if(!(c==null||d==null||e==null))
                         {
                             Message m = new Message();

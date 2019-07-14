@@ -11,20 +11,26 @@ class InfoUtils {
     static String host;
     static int port;
     Socket s;
+    String position;
 
     Socket getSocket()
     {
         return this.s;
     }
-    String sendData(String data,Socket s) throws IOException {
-        System.out.println("send:"+data);
+    String sendData(String data,Socket s,String position) throws IOException {
         long timeout = 3000;
         long now = System.currentTimeMillis();
         this.s = s;
+        this.position = position;
         String mess = null;
         if(this.s==null)
         {
             this.s = new Socket(host, port);
+        }
+        if(this.position!=null)
+        {
+            data=  data.replace("#",position);
+            System.out.println("send:"+data);
         }
         DataInputStream in = null;
         DataOutputStream out;
@@ -50,11 +56,16 @@ class InfoUtils {
             }
             //    in.close();
             //   out.close();
+
             System.out.println("rec:"+mess);
+           if(position==null)
+               this.position = mess.substring(mess.indexOf('&'));
         }
-
-
         return mess;
+    }
+
+    public String getPosition() {
+        return position;
     }
 }
 
