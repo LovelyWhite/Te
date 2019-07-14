@@ -37,7 +37,7 @@ public class RemoteControl extends Fragment {
         start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                
+
             }
         });
         stop.setOnClickListener(new View.OnClickListener() {
