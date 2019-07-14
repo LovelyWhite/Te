@@ -13,6 +13,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.test.te.model.Alert;
 import com.test.te.model.CValue;
 import com.test.te.model.Device;
+import com.test.te.model.DeviceCtrl;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,6 +44,7 @@ public class Data {
    static Vector<Alert> alerts = new Vector<>();
    static Vector<Device> devices =new Vector<>();
    static String showed;
+   static DeviceCtrl ctrl = new DeviceCtrl();
    //远程读设参的数组
    static Map<String,Vector<CValue>> dataLists = new HashMap<>();
    static List<CValue> allpCode = new ArrayList<>();
@@ -175,6 +177,7 @@ public class Data {
          Statement s = conn.createStatement();
          ResultSet  ddrs=dbmd.getTables(null,null,"%",null);
          while(ddrs.next()) {
+            System.out.println(ddrs.getString(3));
             if (ddrs.getString(3).contains("P")) {
                Vector<CValue> cs =new Vector<>();
           //     System.out.println(ddrs.getString(3));
@@ -203,6 +206,20 @@ public class Data {
                String f = ddrs.getString(3).substring(13,15).replace("P","F");
                tableList.add(f);
                dataLists.put(f,cs);
+            }
+            else if(ddrs.getString(3).contains("Controltable")){
+               ResultSet rs = s.executeQuery("select * from " + ddrs.getString(3));
+               while (rs.next()) {
+                 int id =  rs.getInt(1);
+                 if(id == 2)
+                 {
+                    ctrl.setStart(rs.getString(3));
+                 }
+                 if(id==3)
+                 {
+                    ctrl.setStop(rs.getString(3));
+                 }
+               }
             }
          }
          ddrs.close();

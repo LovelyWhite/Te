@@ -115,7 +115,7 @@ class DashBoard extends View {
                 height1,
                 Math.max(point1[1] + mRadius + mStrokeWidth * 2, point2[1] + mRadius + mStrokeWidth * 2)
         );
-        setMeasuredDimension(width, max -60);
+        setMeasuredDimension(width, max);
 
         mCenterX = mCenterY = getMeasuredWidth() / 2f;
         mRectFArc.set(
@@ -253,7 +253,7 @@ class DashBoard extends View {
             mPaint.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
             String value = mLeftText+String.valueOf(mRealTimeValue);
             mPaint.getTextBounds(value, 0, value.length(), mRectText);
-            canvas.drawText(value, mCenterX, mCenterY + mPSRadius + mRectText.height() * 2, mPaint);
+            canvas.drawText(value,mCenterX, mCenterY + mPSRadius + mRectText.height() * 2, mPaint);
         }
     }
 
