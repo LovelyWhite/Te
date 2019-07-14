@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:test ="http://schemas.android.com/apk/res-auto"
+    tools:context=".RemoteControl">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/input_white_radius"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="30dp">
+
+            <com.test.te.DashBoard
+                android:id="@+id/freq"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                test:headerText="Hz"
+                test:leftText="输出频率：" />
+
+            <com.test.te.DashBoard
+                android:id="@+id/ampere"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                test:headerText="A"
+                test:leftText="输出电流：" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/input_white_radius"
+            android:gravity="center"
+            android:text="远程控制"
+            android:textSize="19sp" />
+
+        <TextView
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/input_white_radius"
+            android:gravity="left"
+            android:text="启动"
+            android:textSize="19sp" />
+
+        <TextView
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/input_white_radius"
+            android:gravity="left"
+            android:text="停机"
+            android:textSize="19sp" />
+
+        <TextView
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/input_white_radius"
+            android:gravity="left"
+            android:text="报警复位"
+            android:textSize="19sp" />
+    </LinearLayout>
+</FrameLayout>
