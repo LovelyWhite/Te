@@ -98,7 +98,7 @@ class DashBoard extends View {
         int width = resolveSize(dp2px(200), widthMeasureSpec);
         mRadius = (width - mPadding * 2 - mStrokeWidth * 2) / 2;
 
-        mPaint.setTextSize(sp2px(16));
+        mPaint.setTextSize(sp2px(12));
         if (isShowValue) { // 显示实时读数，View高度增加字体高度3倍
             mPaint.getTextBounds("0", 0, "0".length(), mRectText);
         } else {

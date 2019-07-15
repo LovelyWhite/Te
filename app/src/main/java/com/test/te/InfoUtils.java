@@ -32,6 +32,7 @@ class InfoUtils {
             data=  data.replace("#",position);
             System.out.println("send:"+data);
         }
+        data = data.toUpperCase();
         DataInputStream in = null;
         DataOutputStream out;
         if(!this.s.isClosed())
