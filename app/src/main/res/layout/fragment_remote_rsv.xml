@@ -10,31 +10,34 @@
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp">
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:gravity="center_vertical"
+            android:background="@drawable/input_white_radius">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="当前选择："
-                android:background="@drawable/input_white_radius"
-                android:textSize="20sp"
-                android:layout_marginEnd="5dp"
-                />
+                android:text="系列："
+                android:layout_marginEnd="5dp" />
             <Spinner
                 android:layout_weight="1"
                 android:id="@+id/selectData"
-                android:paddingLeft="10dp"
+                android:paddingStart="10dp"
                 android:layout_height="match_parent"
-                android:background="@drawable/input_white_radius"
                 android:layout_marginEnd="5dp"
                 android:layout_width="0dp">
             </Spinner>
             <Button
                 android:id="@+id/rsvAdd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/input_white_radius"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/button"
                 android:text="添加"/>
+            <android.support.v7.widget.AppCompatCheckBox
+                android:id="@+id/repeat"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="循环读取"/>
         </LinearLayout>
         <ListView
             android:id="@+id/cValueList"
