@@ -213,11 +213,18 @@ public class Data {
                  int id =  rs.getInt(1);
                  if(id == 2)
                  {
-                    ctrl.setStart(rs.getString(3));
+                    ctrl.setAd_start(rs.getString(3).replace("H",""));
+                    ctrl.setStart(rs.getString(4).replace("H",""));
                  }
-                 if(id==3)
+                 else if(id==3)
                  {
-                    ctrl.setStop(rs.getString(3));
+                    ctrl.setAd_stop(rs.getString(3).replace("H",""));
+                    ctrl.setStop(rs.getString(4).replace("H",""));
+                 }
+                 else if(id == 5)
+                 {
+                    ctrl.setAd_freq(rs.getString(3).replace("H",""));
+                    ctrl.setFreq(rs.getString(4).replace("H",""));
                  }
                }
             }

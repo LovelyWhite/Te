@@ -58,9 +58,14 @@ class InfoUtils {
             //   out.close();
 
             System.out.println("rec:"+mess);
-           if(position==null)
+           if(position==null&&mess!=null)
+           {
                this.position = mess.substring(mess.indexOf('&'));
+           }
+
         }
+        if(mess ==null)
+            return "";
         return mess;
     }
 
