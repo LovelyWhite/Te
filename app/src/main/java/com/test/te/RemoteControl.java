@@ -95,9 +95,9 @@ public class RemoteControl extends Fragment {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        start.setEnabled(true);
                     }
                 }).start();
+                start.setEnabled(true);
             }
         });
         stop.setOnClickListener(new View.OnClickListener() {
@@ -132,18 +132,20 @@ public class RemoteControl extends Fragment {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                        stop.setEnabled(true);
+
                     }
                 }).start();
+                stop.setEnabled(true);
             }
         });
         setFreq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                freq.setEnabled(false);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        if(setFreq.getText().equals(""))
+                        if(freqNum.getText().equals(""))
                         {
                             Message m = new Message();
                             m.what = -1;
@@ -152,10 +154,17 @@ public class RemoteControl extends Fragment {
                         else
                         {
                             try {
-                                String num =  setFreq.getText().toString();
+                                String num =  freqNum.getText().toString();
                                 int n = Integer.parseInt(num);
                                 n*=100;
                                 num =  Integer.toHexString(n);
+                                if (num.length() == 1) {
+                                    num = "000" + num;
+                                } else if (num.length() == 2) {
+                                    num = "00" + num;
+                                } else if (num.length() == 3) {
+                                    num = "0" + num;
+                                }
                                 String result = infoUtils.sendData(">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "06" + Data.ctrl.getAd_freq() + num + "#"
                                         , Data.devices.get(Data.cDevicePosition).getSocket()
                                         , Data.devices.get(Data.cDevicePosition).getPosition());
@@ -183,6 +192,7 @@ public class RemoteControl extends Fragment {
                         }
                     }
                 }).start();
+                freq.setEnabled(true);
             }
         });
     }
