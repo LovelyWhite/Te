@@ -41,7 +41,9 @@ public class ValueListAdapter extends BaseAdapter {
                     case -2:
                         Toast.makeText(context, "设备不在线", Toast.LENGTH_LONG).show();break;
                     case -3:
-                        Toast.makeText(context, "ACCESS参数错误", Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "失败", Toast.LENGTH_LONG).show();
+                    case -4:
+                        Toast.makeText(context, "无此参数", Toast.LENGTH_LONG).show();
                 }
                 return false;
             }
@@ -136,36 +138,46 @@ public class ValueListAdapter extends BaseAdapter {
                             @Override
                             public void run() {
                                 try {
-                                    String result = infoUtils.sendData(">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getAddress() + "0001#"
-                                            , Data.devices.get(Data.cDevicePosition).getSocket()
-                                            ,Data.devices.get(Data.cDevicePosition).getPosition());
-                                    result = result==null?"":result;
-                                    if (result.contains("Drive No online")) {
+                                    String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getAddress() + "0001#";
+                                    if(data.contains("null"))
+                                    {
                                         Message m = new Message();
-                                        m.what = -2;//设备不在线
+                                        m.what = -4;
                                         handler.sendMessage(m);
-                                    } else if(!result.equals("")) {
-                                        String a = result.split("&")[1].substring(4, 8);
-                                        String b =Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getMinUnit();
-                                        b= b==null?"1":b;
-                                        double v = Integer.parseInt(a, 16) * Double.parseDouble(b);
-                                           if(!b.contains("."))
-                                        {
-                                            Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).setcValue("" + (int)v);
+                                    }
+                                   else
+                                    {
+                                        String result = infoUtils.sendData(data
+                                                , Data.devices.get(Data.cDevicePosition).getSocket()
+                                                ,Data.devices.get(Data.cDevicePosition).getPosition());
+                                        result = result==null?"":result;
+                                        if (result.contains("Drive No online")) {
+                                            Message m = new Message();
+                                            m.what = -2;//设备不在线
+                                            handler.sendMessage(m);
+                                        } else if(!result.equals("")) {
+                                            String a = result.split("&")[1].substring(4, 8);
+                                            String b =Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getMinUnit();
+                                            b= b==null?"1":b;
+                                            double v = Integer.parseInt(a, 16) * Double.parseDouble(b);
+                                            if(!b.contains("."))
+                                            {
+                                                Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).setcValue("" + (int)v);
+                                            }
+                                            else
+                                            {
+                                                Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).setcValue("" + v);
+                                            }
+                                            Message m = new Message();
+                                            m.what = 1;
+                                            handler.sendMessage(m);
                                         }
                                         else
                                         {
-                                            Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).setcValue("" + v);
+                                            Message m = new Message();
+                                            m.what = -3;
+                                            handler.sendMessage(m);
                                         }
-                                        Message m = new Message();
-                                        m.what = 1;
-                                        handler.sendMessage(m);
-                                    }
-                                    else
-                                    {
-                                        Message m = new Message();
-                                        m.what = -3;
-                                        handler.sendMessage(m);
                                     }
                                 } catch (IOException e) {
                                     e.printStackTrace();
@@ -196,28 +208,38 @@ public class ValueListAdapter extends BaseAdapter {
                                         } else if (value.length() == 3) {
                                             value = "0" + value;
                                         }
-                                        String result = infoUtils.sendData(">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "06" + Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getAddress() + value + "#"
-                                                , Data.devices.get(Data.cDevicePosition).getSocket()
-                                                , Data.devices.get(Data.cDevicePosition).getPosition());
-
-                                        if(result==null)
+                                        String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "06" + Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getAddress() + value + "#";
+                                        if(data.contains("null"))
                                         {
                                             Message m = new Message();
-                                            m.what = -3;
-                                            handler.sendMessage(m);
-                                        }
-                                        else if(result.contains("Drive No online"))
-                                        {
-                                            finalHolder.cValue.setText("");
-                                            Message m = new Message();
-                                            m.what = -2;
+                                            m.what = -4;
                                             handler.sendMessage(m);
                                         }
                                         else
                                         {
-                                            Message m = new Message();
-                                            m.what = 1;
-                                            handler.sendMessage(m);
+                                            String result = infoUtils.sendData(data
+                                                    , Data.devices.get(Data.cDevicePosition).getSocket()
+                                                    , Data.devices.get(Data.cDevicePosition).getPosition());
+
+                                            if(result==null)
+                                            {
+                                                Message m = new Message();
+                                                m.what = -3;
+                                                handler.sendMessage(m);
+                                            }
+                                            else if(result.contains("Drive No online"))
+                                            {
+                                                finalHolder.cValue.setText("");
+                                                Message m = new Message();
+                                                m.what = -2;
+                                                handler.sendMessage(m);
+                                            }
+                                            else
+                                            {
+                                                Message m = new Message();
+                                                m.what = 1;
+                                                handler.sendMessage(m);
+                                            }
                                         }
                                     } catch (IOException e) {
                                         e.printStackTrace();

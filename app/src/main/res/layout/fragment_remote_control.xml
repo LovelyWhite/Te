@@ -26,15 +26,15 @@
 
                 <com.test.te.DashBoard
                     android:id="@+id/freq"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="117dp"
+                    android:layout_height="121dp"
                     android:layout_marginEnd="20dp"
                     test:headerText="Hz"
                     test:leftText="输出频率：" />
 
                 <com.test.te.DashBoard
                     android:id="@+id/ampere"
-                    android:layout_width="wrap_content"
+                    android:layout_width="115dp"
                     android:layout_height="wrap_content"
                     test:headerText="A"
                     test:leftText="输出电流：" />
