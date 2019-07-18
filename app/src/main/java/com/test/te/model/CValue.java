@@ -5,7 +5,8 @@ public class CValue {
     String pCode;
     String minUnit;
     String address;
-    String unit;
+    String unit;//单位
+    String name;
 
     public String getpCode() {
         return pCode;
@@ -44,5 +45,13 @@ public class CValue {
 
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

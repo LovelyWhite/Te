@@ -4,10 +4,14 @@ import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -31,10 +35,12 @@ public class SelectActivity extends AppCompatActivity {
     private ProgressBar selectProgress;
     private DatabaseHelper dbHelper;
     private SQLiteDatabase db;
+    private SelectActivity thisActivity;
     Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        thisActivity = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select);
 //        Intent intent = new Intent(SelectActivity.this, MainActivity.class);
@@ -80,12 +86,24 @@ public class SelectActivity extends AppCompatActivity {
                         Toast.makeText(SelectActivity.this, "连接错误", Toast.LENGTH_LONG).show();
                     }
                     break;
+                    case 3: {
+                        selectProgress.setVisibility(View.GONE);
+                        Toast.makeText(thisActivity,"数据加载成功",Toast.LENGTH_LONG).show();
+                        //创建Fragments并默认显示realtimeDATA
+                        Intent intent = new Intent(SelectActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
+                    break;
+                    case -3: {
+                        selectProgress.setVisibility(View.GONE);
+                        Toast.makeText(thisActivity,"数据加载失败，请检查文件",Toast.LENGTH_LONG).show();
+                        finish();
+                    }
                     case 2: {
                         Toast.makeText(SelectActivity.this, "连接成功", Toast.LENGTH_LONG).show();
                         deviceList.setEnabled(true);
                     }
                 }
-                selectProgress.setVisibility(View.INVISIBLE);
                 return false;
             }
         });
@@ -102,10 +120,63 @@ public class SelectActivity extends AppCompatActivity {
         deviceList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(SelectActivity.this,"正在加载数据",Toast.LENGTH_LONG).show();
+                selectProgress.setVisibility(View.VISIBLE);
                 Data.cDevicePosition = position;
                 deviceList.setEnabled(false);
-                Intent intent = new Intent(SelectActivity.this, MainActivity.class);
-                startActivity(intent);
+                boolean x =false;
+                //加载参数数据
+                //存pCode
+                SharedPreferences userSettings = getSharedPreferences("pCodeShowed", 0);
+                Data.showed = userSettings.getString(Data.devices.get(Data.cDevicePosition).getDeviceID(),"");
+                //  Data.getExcel("DeviceCode",this);
+                //模拟数据
+                Alert alert = new Alert();
+                alert.setAlertFreq("112");
+                alert.setAlertEle("122");
+                alert.setAlertTime("20:00");
+                alert.setAlertID("111");
+                alert.setAlertDate("2019/09/21");
+                Data.alerts.add(alert);
+
+                final int REQUEST_EXTERNAL_STORAGE = 1;
+                String[] PERMISSIONS_STORAGE = {"android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE" };
+                try {
+                    //检测是否有写的权限
+                    int permission = ActivityCompat.checkSelfPermission(thisActivity, "android.permission.WRITE_EXTERNAL_STORAGE");
+                    if (permission != PackageManager.PERMISSION_GRANTED) {
+                        // 没有写的权限，去申请写的权限，会弹出对话框
+                        ActivityCompat.requestPermissions(thisActivity, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
+                    }
+                    else
+                    {
+                        final String b =  Data.devices.get(Data.cDevicePosition).getDeviceID().split("-")[0];
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                Data.CopyAssets(thisActivity);
+                                boolean x = Data.getAccess(b+"parameterTable.mdb");
+                                if(x)
+                                {
+                                    Message m = new Message();
+                                    m.what = 3;//成功
+                                    handler.sendMessage(m);
+                                }
+                                else
+                                {
+                                    Message m = new Message();
+                                    m.what = -3;//失败
+                                    handler.sendMessage(m);
+                                }
+
+                            }
+                        }).start();
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         deviceList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -131,7 +202,6 @@ public class SelectActivity extends AppCompatActivity {
             @Override
             public void run() {
                 InfoUtils infoUtils = new InfoUtils();
-                selectProgress.setVisibility(View.VISIBLE);
                 StringBuilder stringBuilder = new StringBuilder("<");
                 for (int i = 0; i < Data.devices.size(); i++) {
                     stringBuilder.append(Data.devices.get(i).getDeviceID());
@@ -167,7 +237,6 @@ public class SelectActivity extends AppCompatActivity {
                         handler.sendMessage(m);
                     }
                 } else {
-                    selectProgress.setVisibility(View.INVISIBLE);
                     deviceList.setEnabled(true);
                 }
             }
@@ -183,7 +252,6 @@ public class SelectActivity extends AppCompatActivity {
                         .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                selectProgress.setVisibility(View.VISIBLE);
                                 final EditText newDeviceID = view.findViewById(R.id.newDeviceID);
                                 final EditText newDevicePW = view.findViewById(R.id.newPassword);
                                 final String id = newDeviceID.getText().toString();
@@ -191,7 +259,6 @@ public class SelectActivity extends AppCompatActivity {
                                 new Thread(new Runnable() {
                                     @Override
                                     public void run() {
-
                                         Cursor c = db.rawQuery("SELECT * FROM Devices WHERE deviceID ='" + id + "'", null);
                                         System.out.println(c.getCount());
                                         if (c.getCount() == 1) {
@@ -216,7 +283,9 @@ public class SelectActivity extends AppCompatActivity {
                                                     Message m = new Message();
                                                     m.what = 0;//验证成功
                                                     handler.sendMessage(m);
-                                                } {
+                                                }
+                                                else
+                                                    {
                                                     Message m = new Message();
                                                     m.what = -1;//验证失败
                                                     handler.sendMessage(m);
@@ -257,5 +326,35 @@ public class SelectActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         deviceList.setEnabled(true);
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode==1)
+        {
+            for (int grantResult : grantResults) {
+                if(grantResult!=0)
+                {
+                    Toast.makeText(this,"未获取权限",Toast.LENGTH_LONG).show();
+                    finish();
+                    break;
+                }
+            }
+        }
+        final String b =  Data.devices.get(Data.cDevicePosition).getDeviceID().split("-")[0];
+        Data.CopyAssets(thisActivity);
+        boolean x = Data.getAccess(b+"parameterTable.mdb");
+        if(x)
+        {
+            Message m = new Message();
+            m.what = 3;//成功
+            handler.sendMessage(m);
+        }
+        else
+        {
+            Message m = new Message();
+            m.what = -3;//失败
+            handler.sendMessage(m);
+        }
     }
 }

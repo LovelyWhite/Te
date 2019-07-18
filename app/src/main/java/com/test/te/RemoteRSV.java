@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,7 +30,6 @@ import java.io.IOException;
 public class RemoteRSV extends Fragment {
     InfoUtils infoUtils;
     private ListView cValueList;
-    private Spinner selectData;
     private Button rsvAdd;
     public ValueListAdapter valueListAdapter;
     LayoutInflater inflater;
@@ -45,7 +45,6 @@ public class RemoteRSV extends Fragment {
         this.inflater=inflater;
         infoUtils = new InfoUtils();
         cValueList = view.findViewById(R.id.cValueList);
-        selectData = view.findViewById(R.id.selectData);
         valueListAdapter = new ValueListAdapter(view.getContext(),this);
         cValueList.setAdapter(valueListAdapter);
         rsvAdd = view.findViewById(R.id.rsvAdd);
@@ -57,26 +56,6 @@ public class RemoteRSV extends Fragment {
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_item,Data.tableList);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        selectData.setAdapter(adapter);
-        selectData.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {
-            public void onItemSelected(AdapterView<?> arg0, View arg1,
-                                       int arg2, long arg3) {
-                if(t!=null&&t.isAlive())
-                {
-                    Toast.makeText(getContext(),"请关闭或等待循环读取结束",Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    Data.nowTable=arg2;
-                    valueListAdapter.notifyDataSetChanged();
-                }
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
         rsvAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,8 +66,10 @@ public class RemoteRSV extends Fragment {
         repeat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+
                 if(b)
                 {
+                    Toast.makeText(getContext(),"开始循环读取",Toast.LENGTH_SHORT).show();
                     exit = false;
                     t = new Thread(new Runnable() {
                         @Override
@@ -97,12 +78,18 @@ public class RemoteRSV extends Fragment {
                             {
                                 try {
                                     int count = valueListAdapter.getCount();
+                                    System.out.println("cc："+count);
                                     for (int i = 0; i <count; i++) {
+                                        System.out.println(i);
                                         if(exit)
                                         {
+
+                                            Looper.prepare();
+                                            Toast.makeText(getContext(),"停止成功",Toast.LENGTH_SHORT).show();
+                                            Looper.loop();
                                             break;
                                         }
-                                        String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(i).getAddress() + "0001#";
+                                        String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataLists.get(i).getAddress() + "0001#";
                                         if(data.contains("null"))
                                         {
                                         }
@@ -115,20 +102,20 @@ public class RemoteRSV extends Fragment {
                                             if (result.contains("Drive No online")) {
                                             } else if(!result.equals("")) {
                                                 String a = result.split("&")[1].substring(4, 8);
-                                                String b =Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(i).getMinUnit();
+                                                String b =Data.dataLists.get(i).getMinUnit();
                                                 b= b==null?"1":b;
                                                 double v = Integer.parseInt(a, 16) * Double.parseDouble(b);
                                                 if(!b.contains("."))
                                                 {
-                                                    Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(i).setcValue("" + (int)v);
+                                                    Data.dataLists.get(i).setcValue("" + (int)v);
                                                 }
                                                 else
                                                 {
-                                                    Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(i).setcValue("" + v);
+                                                    Data.dataLists.get(i).setcValue("" + v);
                                                 }
                                             }
                                         }
-                                        Thread.sleep(2000);
+                                        Thread.sleep(1000);
                                     }
                                 } catch (IOException e) {
                                     e.printStackTrace();
@@ -143,6 +130,7 @@ public class RemoteRSV extends Fragment {
                 }
                 else
                 {
+                    Toast.makeText(getContext(),"正在停止",Toast.LENGTH_SHORT).show();
                     exit = true;
                 }
             }
@@ -155,7 +143,7 @@ public class RemoteRSV extends Fragment {
 
     @Override
     public void onDestroy() {
-        if(t.isAlive())
+        if(!exit)
         {
             exit = true;
         }

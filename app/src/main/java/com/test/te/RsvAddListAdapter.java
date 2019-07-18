@@ -59,7 +59,7 @@ public class RsvAddListAdapter extends BaseAdapter  {
                     Data.showed+=Data.allpCode.get(p).getpCode();
                     ((RsvAddActivity)fContext).commit();
                     System.out.println(Data.allpCode.get(p).getpCode().substring(0, 2));
-                    Data.dataLists.get(Data.allpCode.get(p).getpCode().substring(0,2)).add(Data.allpCode.get(p));
+                    Data.dataLists.add(Data.allpCode.get(p));
                     fContext.setResult(1);
                     System.out.println(p);
                     Data.allpCode.remove(p);
@@ -73,7 +73,7 @@ public class RsvAddListAdapter extends BaseAdapter  {
             holder = (ViewHolder)convertView.getTag();
         }
         holder.buttonOK.setTag(position);
-        holder.pCode.setText(Data.allpCode.get(position).getpCode());
+        holder.pCode.setText(Data.allpCode.get(position).getName()+Data.allpCode.get(position).getpCode());
         return convertView;
     }
 

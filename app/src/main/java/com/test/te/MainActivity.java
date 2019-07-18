@@ -63,56 +63,8 @@ public class MainActivity extends AppCompatActivity {
         //120.41.250.52
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        boolean x =false;
-        //加载参数数据
-        //存pCode
-        SharedPreferences userSettings = getSharedPreferences("pCodeShowed", 0);
-        Data.showed = userSettings.getString(Data.devices.get(Data.cDevicePosition).getDeviceID(),"");
-        //  Data.getExcel("DeviceCode",this);
-        //模拟数据
-        Alert alert = new Alert();
-        alert.setAlertFreq("112");
-        alert.setAlertEle("122");
-        alert.setAlertTime("20:00");
-        alert.setAlertID("111");
-        alert.setAlertDate("2019/09/21");
-        Data.alerts.add(alert);
-
-        final int REQUEST_EXTERNAL_STORAGE = 1;
-        String[] PERMISSIONS_STORAGE = {"android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE" };
-        try {
-            //检测是否有写的权限
-            int permission = ActivityCompat.checkSelfPermission(this, "android.permission.WRITE_EXTERNAL_STORAGE");
-            if (permission != PackageManager.PERMISSION_GRANTED) {
-                // 没有写的权限，去申请写的权限，会弹出对话框
-                ActivityCompat.requestPermissions(this, PERMISSIONS_STORAGE, REQUEST_EXTERNAL_STORAGE);
-            }
-            else
-            {
-                String b =  Data.devices.get(Data.cDevicePosition).getDeviceID().split("-")[0];
-                Toast.makeText(MainActivity.this,"正在加载数据",Toast.LENGTH_LONG).show();
-                Data.CopyAssets(this);
-                x = Data.getAccess(b+"parameterTable.mdb");
-                long now = System.currentTimeMillis();
-                while (System.currentTimeMillis()-now<15000&& !x) {
-                }
-                if(x)
-                {
-                    Toast.makeText(MainActivity.this,"数据加载成功",Toast.LENGTH_LONG).show();
-                    //创建Fragments并默认显示realtimeDATA
-                    buildFragments();
-                    Data.mainActivity = this;
-                }
-                else
-                {
-                    Toast.makeText(MainActivity.this,"数据加载失败，请检查文件",Toast.LENGTH_LONG).show();
-                    finish();
-                }
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        buildFragments();
+        Data.mainActivity = this;
 
     }
     void buildFragments() {
@@ -165,22 +117,6 @@ public class MainActivity extends AppCompatActivity {
         editor.putString(Data.devices.get(Data.cDevicePosition).getDeviceID(), Data.showed);
         editor.apply();
     }
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode==1)
-        {
-            for (int grantResult : grantResults) {
-                if(grantResult!=0)
-                {
-                    Toast.makeText(MainActivity.this,"未获取权限",Toast.LENGTH_LONG).show();
-                    finish();
-                    break;
-                }
-            }
-        }
-        Data.getAccess("CV3100ParameterTable.mdb");
-    }
 
     @Override
     protected void onDestroy() {
@@ -197,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
         {
             remoteRSV.notifyDataSetChanged();
         }
-        Data.tableList.clear();
         Data.nowTable = 0;
         Data.cDevicePosition = -1;
         super.onDestroy();

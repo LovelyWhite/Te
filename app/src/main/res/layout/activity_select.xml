@@ -6,26 +6,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#ec4cc2e6">
-    <LinearLayout
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:orientation="horizontal"
-        android:layout_margin="10dp"
-        android:background="@drawable/input_white_radius">
-        <TextView
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:textSize="15dp"
-            android:text="设备列表"/>
-
-        <ProgressBar
-            android:id="@+id/selectProgress"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:visibility="invisible" />
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/input_white_radius"
+        android:gravity="center"
+        android:text="设备列表"
+        android:textSize="19sp" />
     <ListView
         android:id="@+id/deviceList"
         android:layout_width="match_parent"
@@ -35,7 +25,7 @@
         android:layout_marginStart="0dp"
         android:layout_margin="5dp"
         android:scrollbars="none"
-        android:dividerHeight="10dp"
+        android:dividerHeight="5dp"
         android:divider="@null"/>
     <Button
         android:id="@+id/addDevice"
@@ -47,4 +37,10 @@
         android:background="@drawable/input_white_radius"
         android:gravity="center"
         android:layout_gravity="center"/>
+    <ProgressBar
+        android:id="@+id/selectProgress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
 </LinearLayout>

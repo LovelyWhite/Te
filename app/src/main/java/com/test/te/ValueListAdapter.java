@@ -58,13 +58,13 @@ public class ValueListAdapter extends BaseAdapter {
         }
         else
         {
-            return Data.dataLists.get(Data.tableList.get(Data.nowTable)).size();
+            return Data.dataLists.size();
         }
     }
 
     @Override
     public Object getItem(int position) {
-        return Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position);
+        return Data.dataLists.get(position);
     }
 
     @Override
@@ -93,8 +93,8 @@ public class ValueListAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.paraName.setText(Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getpCode());
-        holder.cValue.setText(Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getcValue());
+        holder.paraName.setText(Data.dataLists.get(position).getName()+Data.dataLists.get(position).getpCode());
+        holder.cValue.setText(Data.dataLists.get(position).getcValue());
         final ViewHolder finalHolder = holder;
         holder.option.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,15 +114,15 @@ public class ValueListAdapter extends BaseAdapter {
                 delete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Data.showed=Data.showed.replace( Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getpCode(),"");
+                        Data.showed=Data.showed.replace( Data.dataLists.get(position).getpCode(),"");
                         Data.mainActivity.commit();
-                        Data.allpCode.add(Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position));
-                        Data.dataLists.get(Data.tableList.get(Data.nowTable)).remove(position);
+                        Data.allpCode.add(Data.dataLists.get(position));
+                        Data.dataLists.remove(position);
                         notifyDataSetChanged();
                         alertDialog.dismiss();
                     }
                 });
-                if (position == Data.dataLists.get(Data.tableList.get(Data.nowTable)).size()-1)
+                if (position == Data.dataLists.size()-1)
                 {
                     readDoubleValue.setEnabled(false);
                 }
@@ -138,7 +138,7 @@ public class ValueListAdapter extends BaseAdapter {
                             @Override
                             public void run() {
                                 try {
-                                    String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getAddress() + "0001#";
+                                    String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataLists.get(position).getAddress() + "0001#";
                                     if(data.contains("null"))
                                     {
                                         Message m = new Message();
@@ -157,16 +157,16 @@ public class ValueListAdapter extends BaseAdapter {
                                             handler.sendMessage(m);
                                         } else if(!result.equals("")) {
                                             String a = result.split("&")[1].substring(4, 8);
-                                            String b =Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getMinUnit();
+                                            String b =Data.dataLists.get(position).getMinUnit();
                                             b= b==null?"1":b;
                                             double v = Integer.parseInt(a, 16) * Double.parseDouble(b);
                                             if(!b.contains("."))
                                             {
-                                                Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).setcValue("" + (int)v);
+                                                Data.dataLists.get(position).setcValue("" + (int)v);
                                             }
                                             else
                                             {
-                                                Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).setcValue("" + v);
+                                                Data.dataLists.get(position).setcValue("" + v);
                                             }
                                             Message m = new Message();
                                             m.what = 1;
@@ -196,8 +196,8 @@ public class ValueListAdapter extends BaseAdapter {
                                 @Override
                                 public void run() {
                                     try {
-                                        Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).setcValue(finalHolder.cValue.getText().toString());
-                                        String b =Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getMinUnit();
+                                        Data.dataLists.get(position).setcValue(finalHolder.cValue.getText().toString());
+                                        String b =Data.dataLists.get(position).getMinUnit();
                                         b= b==null?"1":b;
                                         double v = Double.parseDouble(finalHolder.cValue.getText().toString())/Double.parseDouble(b);
                                         String value = Integer.toHexString((int) v);
@@ -208,7 +208,7 @@ public class ValueListAdapter extends BaseAdapter {
                                         } else if (value.length() == 3) {
                                             value = "0" + value;
                                         }
-                                        String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "06" + Data.dataLists.get(Data.tableList.get(Data.nowTable)).get(position).getAddress() + value + "#";
+                                        String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "06" + Data.dataLists.get(position).getAddress() + value + "#";
                                         if(data.contains("null"))
                                         {
                                             Message m = new Message();

@@ -11,33 +11,28 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_margin="10dp"
-            android:gravity="center_vertical"
-            android:background="@drawable/input_white_radius">
+            android:layout_margin="5dp"
+            android:gravity="start">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="系列："
-                android:layout_marginEnd="5dp" />
-            <Spinner
-                android:layout_weight="1"
-                android:id="@+id/selectData"
-                android:paddingStart="10dp"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="5dp"
-                android:layout_width="0dp">
-            </Spinner>
-            <Button
-                android:id="@+id/rsvAdd"
-                android:layout_width="70dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/button"
-                android:text="添加"/>
+                android:text="显示的项目"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="1"/>
             <android.support.v7.widget.AppCompatCheckBox
                 android:id="@+id/repeat"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:text="循环读取"/>
+            <Button
+                android:id="@+id/rsvAdd"
+                android:layout_width="70dp"
+                android:layout_marginStart="10dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/button"
+                android:layout_gravity="end"
+                android:text="添加"/>
+
         </LinearLayout>
         <ListView
             android:id="@+id/cValueList"
@@ -50,7 +45,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:scrollbars="none"
-            android:dividerHeight="10dp"
+            android:dividerHeight="5dp"
             android:divider="@null"
             >
         </ListView>

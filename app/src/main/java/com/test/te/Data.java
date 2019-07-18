@@ -46,93 +46,87 @@ public class Data {
    static String showed;
    static DeviceCtrl ctrl = new DeviceCtrl();
    //远程读设参的数组
-   static Map<String,Vector<CValue>> dataLists = new HashMap<>();
+   static List<CValue> dataLists = new ArrayList<>();
    static List<CValue> allpCode = new ArrayList<>();
-   static List<String> tableList = new ArrayList<>();
    static int nowTable;
    static MainActivity mainActivity;
    static int cDevicePosition;
-
-   static void getJson(String fileName, Context context) {
-      //将json数据变成字符串
-      StringBuilder stringBuilder = new StringBuilder();
-      try {
-         //获取assets资源管理器
-         AssetManager assetManager = context.getAssets();
-         //通过管理器打开文件并读取
-         BufferedReader bf = new BufferedReader(new InputStreamReader(
-                 assetManager.open(fileName)));
-         String line;
-         while ((line = bf.readLine()) != null) {
-            stringBuilder.append(line);
-         }
-      } catch (IOException e) {
-         e.printStackTrace();
-      }
-      JSONArray  temp = (JSONArray) JSON.parse(stringBuilder.toString());
-      Vector<CValue> cValues =new Vector<>();
-      for(int i = 0;i<temp.size();i++)
-      {
-         JSONObject o =  (((JSONObject)temp.get(i)));
-         CValue cValue = new CValue();
-         cValue.setpCode(o.getString("pCode"));
-         cValue.setAddress(o.getString("Address"));
-         cValue.setMinUnit(o.getString("MinUnit"));
-         cValues.add(cValue);
-      }
-   }
-   public static String getMatcher(String regex, String source) {
-   String result = "";
-   Pattern pattern = Pattern.compile(regex);
-   Matcher matcher = pattern.matcher(source);
-   while (matcher.find()) {
-      result = matcher.group(0);
-   }
-   return result;
-}
-   static void getExcel(String filePath,Context context)
-   {
-      AssetManager assetManager = context.getAssets();
-      try {
-         String[] fileList = assetManager.list(filePath);
-         for(String fileName:fileList)
-         {
-            Workbook workbook = Workbook.getWorkbook(assetManager.open(filePath+"/"+fileName));
-            Sheet sheet= workbook.getSheet(0);
-            int rows =  sheet.getRows();
-            Vector<CValue> cs =new Vector<>();
-            for(int i =1;i<rows;i++)
-            {
-               CValue cValue = new CValue();
-               cValue.setpCode(sheet.getCell(1,i).getContents());
-               String unit = sheet.getCell(4,i).getContents();
-               if(unit!=null&&!unit.equals(""))
-               {
-                //  System.out.println(getMatcher("[^\\d.]*", unit));
-                  cValue.setMinUnit(unit.replaceAll("[^\\d.]*",""));
-               }
-               String ress = sheet.getCell(6,i).getContents();
-               if(ress!=null&&!ress.equals(""))
-               {
-                  cValue.setAddress(ress.replace("H",""));
-               }
-               if(showed.contains(sheet.getCell(1,i).getContents()))
-                  cs.add(cValue);
-               else
-               {
-                  allpCode.add(cValue);
-               }
-            }
-            String f = fileName.substring(13,15).replace("P","F");
-            tableList.add(f);
-            dataLists.put(f,cs);
-         }
-      } catch (IOException e) {
-         e.printStackTrace();
-      } catch (BiffException e) {
-         e.printStackTrace();
-      }
-   }
+//
+//   static void getJson(String fileName, Context context) {
+//      //将json数据变成字符串
+//      StringBuilder stringBuilder = new StringBuilder();
+//      try {
+//         //获取assets资源管理器
+//         AssetManager assetManager = context.getAssets();
+//         //通过管理器打开文件并读取
+//         BufferedReader bf = new BufferedReader(new InputStreamReader(
+//                 assetManager.open(fileName)));
+//         String line;
+//         while ((line = bf.readLine()) != null) {
+//            stringBuilder.append(line);
+//         }
+//      } catch (IOException e) {
+//         e.printStackTrace();
+//      }
+//      JSONArray  temp = (JSONArray) JSON.parse(stringBuilder.toString());
+//      for(int i = 0;i<temp.size();i++)
+//      {
+//         JSONObject o =  (((JSONObject)temp.get(i)));
+//         CValue cValue = new CValue();
+//         cValue.setpCode(o.getString("pCode"));
+//         cValue.setAddress(o.getString("Address"));
+//         cValue.setMinUnit(o.getString("MinUnit"));
+//         dataLists.add(cValue);
+//      }
+//   }
+//   public static String getMatcher(String regex, String source) {
+//   String result = "";
+//   Pattern pattern = Pattern.compile(regex);
+//   Matcher matcher = pattern.matcher(source);
+//   while (matcher.find()) {
+//      result = matcher.group(0);
+//   }
+//   return result;
+//}
+//   static void getExcel(String filePath,Context context)
+//   {
+//      AssetManager assetManager = context.getAssets();
+//      try {
+//         String[] fileList = assetManager.list(filePath);
+//         for(String fileName:fileList)
+//         {
+//            Workbook workbook = Workbook.getWorkbook(assetManager.open(filePath+"/"+fileName));
+//            Sheet sheet= workbook.getSheet(0);
+//            int rows =  sheet.getRows();
+//            for(int i =1;i<rows;i++)
+//            {
+//               CValue cValue = new CValue();
+//               cValue.setpCode(sheet.getCell(1,i).getContents());
+//               String unit = sheet.getCell(4,i).getContents();
+//               if(unit!=null&&!unit.equals(""))
+//               {
+//                //  System.out.println(getMatcher("[^\\d.]*", unit));
+//                  cValue.setMinUnit(unit.replaceAll("[^\\d.]*",""));
+//               }
+//               String ress = sheet.getCell(6,i).getContents();
+//               if(ress!=null&&!ress.equals(""))
+//               {
+//                  cValue.setAddress(ress.replace("H",""));
+//               }
+//               if(showed.contains(sheet.getCell(1,i).getContents()))
+//                  dataLists.add(cValue);
+//               else
+//               {
+//                  allpCode.add(cValue);
+//               }
+//            }
+//         }
+//      } catch (IOException e) {
+//         e.printStackTrace();
+//      } catch (BiffException e) {
+//         e.printStackTrace();
+//      }
+//   }
    static void CopyAssets(Context context) {
       try {
          File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/Te_Devices");
@@ -166,26 +160,24 @@ public class Data {
          e.printStackTrace();
       }
    }
-   static boolean getAccess(String fileName)
-   {
+   static boolean getAccess(String fileName) {
       try
       {
          Class.forName("net.ucanaccess.jdbc.UcanaccessDriver");
-
          Connection conn = DriverManager.getConnection("jdbc:ucanaccess://"+Environment.getExternalStorageDirectory().getAbsolutePath()+"/Te_Devices/"+fileName,"","hngddqxy67758837");
          DatabaseMetaData dbmd = conn.getMetaData();
          Statement s = conn.createStatement();
          ResultSet  ddrs=dbmd.getTables(null,null,"%",null);
-         while(ddrs.next()) {
+          while(ddrs.next()) {
             System.out.println(ddrs.getString(3));
             if (ddrs.getString(3).contains("P")) {
-               Vector<CValue> cs =new Vector<>();
           //     System.out.println(ddrs.getString(3));
                ResultSet rs = s.executeQuery("select * from " + ddrs.getString(3));
                while (rs.next()) {
             //      System.out.println(rs.getString(2) + "," + rs.getString(5) + "," + rs.getString(7));
                   CValue cValue = new CValue();
                   cValue.setpCode(rs.getString(2));
+                  cValue.setName(rs.getString(3));
                   String unit = rs.getString(5);
                   if (unit != null && !unit.equals("")) {
                      //  System.out.println(getMatcher("[^\\d.]*", unit));
@@ -197,15 +189,36 @@ public class Data {
                      cValue.setAddress(ress.replace("H",""));
                   }
                   if(showed.contains(rs.getString(2)))
-                     cs.add(cValue);
+                     dataLists.add(cValue);
+                  else
+                     allpCode.add(cValue);
+               }
+            }
+            else if(ddrs.getString((3)).contains("TableU"))
+            {
+               ResultSet rs = s.executeQuery("select * from " + ddrs.getString(3));
+               while (rs.next())
+               {
+                  CValue cValue = new CValue();
+                  cValue.setpCode(rs.getString(2));
+                  cValue.setName(rs.getString(3));
+                  String unit = rs.getString(4);
+                  if (unit != null && !unit.equals("")) {
+                     //  System.out.println(getMatcher("[^\\d.]*", unit));
+                     cValue.setMinUnit(unit.replaceAll("[^\\d.]*", ""));
+                  }
+                  String ress =rs.getString(5);
+                  if(ress!=null&&!ress.equals(""))
+                  {
+                     cValue.setAddress(ress.replace("H",""));
+                  }
+                  if(showed.contains(rs.getString(1)))
+                     dataLists.add(cValue);
                   else
                   {
                      allpCode.add(cValue);
                   }
                }
-               String f = ddrs.getString(3).substring(13,15).replace("P","F");
-               tableList.add(f);
-               dataLists.put(f,cs);
             }
             else if(ddrs.getString(3).contains("Controltable")){
                ResultSet rs = s.executeQuery("select * from " + ddrs.getString(3));

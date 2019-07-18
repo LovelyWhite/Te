@@ -19,8 +19,6 @@ import java.io.IOException;
 
 public class RemoteControl extends Fragment {
 
-    DashBoard freq;
-    DashBoard ampere;
     Button start,stop,setFreq;
     EditText freqNum;
     Handler handler;
@@ -29,8 +27,6 @@ public class RemoteControl extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
        View view = inflater.inflate(R.layout.fragment_remote_control, container, false);
-       freq = view.findViewById(R.id.freq);
-       ampere = view.findViewById(R.id.ampere);
        start = view.findViewById(R.id.start);
        stop = view.findViewById(R.id.stop);
        setFreq = view.findViewById(R.id.set_freq);
@@ -60,8 +56,6 @@ public class RemoteControl extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        freq.setRealTimeValue(1.2);
-        ampere.setRealTimeValue(11);
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,7 +135,7 @@ public class RemoteControl extends Fragment {
         setFreq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                freq.setEnabled(false);
+                setFreq.setEnabled(false);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -192,7 +186,7 @@ public class RemoteControl extends Fragment {
                         }
                     }
                 }).start();
-                freq.setEnabled(true);
+                setFreq.setEnabled(true);
             }
         });
     }
