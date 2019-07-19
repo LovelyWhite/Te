@@ -15,7 +15,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,7 +22,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.test.te.model.Alert;
 import com.test.te.model.Device;
 
 import java.io.IOException;
@@ -98,7 +96,7 @@ public class SelectActivity extends AppCompatActivity {
                         selectProgress.setVisibility(View.GONE);
                         Toast.makeText(thisActivity,"数据加载失败，请检查文件",Toast.LENGTH_LONG).show();
                         finish();
-                    }
+                    }break;
                     case 2: {
                         Toast.makeText(SelectActivity.this, "连接成功", Toast.LENGTH_LONG).show();
                         deviceList.setEnabled(true);
@@ -129,15 +127,16 @@ public class SelectActivity extends AppCompatActivity {
                 //存pCode
                 SharedPreferences userSettings = getSharedPreferences("pCodeShowed", 0);
                 Data.showed = userSettings.getString(Data.devices.get(Data.cDevicePosition).getDeviceID(),"");
+                System.out.println(Data.showed);
                 //  Data.getExcel("DeviceCode",this);
                 //模拟数据
-                Alert alert = new Alert();
-                alert.setAlertFreq("112");
-                alert.setAlertEle("122");
-                alert.setAlertTime("20:00");
-                alert.setAlertID("111");
-                alert.setAlertDate("2019/09/21");
-                Data.alerts.add(alert);
+//                Alert alert = new Alert();
+//                alert.setAlertFreq("112");
+//                alert.setAlertEle("122");
+//                alert.setAlertTime("20:00");
+//                alert.setAlertID("111");
+//                alert.setAlertDate("2019/09/21");
+//                Data.alerts.add(alert);
 
                 final int REQUEST_EXTERNAL_STORAGE = 1;
                 String[] PERMISSIONS_STORAGE = {"android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE" };

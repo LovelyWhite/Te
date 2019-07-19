@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,7 +38,7 @@ public class AlertListAdapter extends BaseAdapter  {
 
     static class ViewHolder
     {
-        TextView alertID,alertDate,alertTime,alertEle,alertFreq;
+        TextView paraName,cValue;
     }
 
 
@@ -48,22 +49,16 @@ public class AlertListAdapter extends BaseAdapter  {
         {
             convertView = layoutInflater.inflate(R.layout.alart,null);
             holder = new ViewHolder();
-            holder.alertID = convertView.findViewById(R.id.alertID);
-            holder.alertDate = convertView.findViewById(R.id.alertDate);
-            holder.alertTime = convertView.findViewById(R.id.alertTime);
-            holder.alertEle = convertView.findViewById(R.id.alertEle);
-            holder.alertFreq = convertView.findViewById(R.id.alertFreq);
+            holder.paraName = convertView.findViewById(R.id.paraName);
+            holder.cValue = convertView.findViewById(R.id.cValue);
             convertView.setTag(holder);
         }
         else
         {
             holder = (ViewHolder)convertView.getTag();
         }
-        holder.alertID.setText(Data.alerts.get(position).getAlertID());
-        holder.alertDate.setText(Data.alerts.get(position).getAlertDate());
-        holder.alertTime.setText(Data.alerts.get(position).getAlertTime());
-        holder.alertEle.setText(Data.alerts.get(position).getAlertEle());
-        holder.alertFreq.setText(Data.alerts.get(position).getAlertFreq());
+        holder.paraName.setText(Data.alerts.get(position).getpCode()+Data.alerts.get(position).getName());
+        holder.cValue.setText(Data.alerts.get(position).getcValue());
         return convertView;
     }
 

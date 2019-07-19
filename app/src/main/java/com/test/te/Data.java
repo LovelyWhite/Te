@@ -1,50 +1,28 @@
 package com.test.te;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.test.te.model.Alert;
 import com.test.te.model.CValue;
 import com.test.te.model.Device;
 import com.test.te.model.DeviceCtrl;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import jxl.Sheet;
-import jxl.Workbook;
-import jxl.read.biff.BiffException;
 
 public class Data {
-   static Vector<Alert> alerts = new Vector<>();
+   static Vector<CValue> alerts = new Vector<>();
    static Vector<Device> devices =new Vector<>();
-   static String showed;
-   static DeviceCtrl ctrl = new DeviceCtrl();
+   static String showed;   static DeviceCtrl ctrl = new DeviceCtrl();
    //远程读设参的数组
    static List<CValue> dataLists = new ArrayList<>();
    static List<CValue> allpCode = new ArrayList<>();
@@ -171,10 +149,10 @@ public class Data {
           while(ddrs.next()) {
             System.out.println(ddrs.getString(3));
             if (ddrs.getString(3).contains("P")) {
-          //     System.out.println(ddrs.getString(3));
+               //     System.out.println(ddrs.getString(3));
                ResultSet rs = s.executeQuery("select * from " + ddrs.getString(3));
                while (rs.next()) {
-            //      System.out.println(rs.getString(2) + "," + rs.getString(5) + "," + rs.getString(7));
+                  //      System.out.println(rs.getString(2) + "," + rs.getString(5) + "," + rs.getString(7));
                   CValue cValue = new CValue();
                   cValue.setpCode(rs.getString(2));
                   cValue.setName(rs.getString(3));
@@ -183,18 +161,19 @@ public class Data {
                      //  System.out.println(getMatcher("[^\\d.]*", unit));
                      cValue.setMinUnit(unit.replaceAll("[^\\d.]*", ""));
                   }
-                  String ress =rs.getString(7);
-                  if(ress!=null&&!ress.equals(""))
-                  {
-                     cValue.setAddress(ress.replace("H",""));
+                  String ress = rs.getString(7);
+                  if (ress != null && !ress.equals("")) {
+                     cValue.setAddress(ress.replace("H", ""));
                   }
-                  if(showed.contains(rs.getString(2)))
-                     dataLists.add(cValue);
-                  else
-                     allpCode.add(cValue);
+                  if (!cValue.getpCode().equals("")) {
+                     if (showed.contains(cValue.getpCode()))
+                        dataLists.add(cValue);
+                     else
+                        allpCode.add(cValue);
+                  }
                }
             }
-            else if(ddrs.getString((3)).contains("TableU"))
+            else if(ddrs.getString((3)).contains("TableU0"))
             {
                ResultSet rs = s.executeQuery("select * from " + ddrs.getString(3));
                while (rs.next())
@@ -212,11 +191,17 @@ public class Data {
                   {
                      cValue.setAddress(ress.replace("H",""));
                   }
-                  if(showed.contains(rs.getString(1)))
-                     dataLists.add(cValue);
-                  else
+                  if (!cValue.getpCode().equals(""))
                   {
-                     allpCode.add(cValue);
+                     if(cValue.getpCode().contains("U0"))
+                     {
+                        System.out.println(cValue.getpCode());
+                        if(showed.contains(cValue.getpCode()))
+                           dataLists.add(cValue);
+                        else
+                           allpCode.add(cValue);
+                        alerts.add(cValue);
+                     }
                   }
                }
             }

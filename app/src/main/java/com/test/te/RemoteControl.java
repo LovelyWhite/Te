@@ -31,7 +31,7 @@ public class RemoteControl extends Fragment {
        stop = view.findViewById(R.id.stop);
        setFreq = view.findViewById(R.id.set_freq);
        freqNum = view.findViewById(R.id.freq_num);
-        handler = new Handler(new Handler.Callback() {
+       handler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
                 switch (msg.what) {

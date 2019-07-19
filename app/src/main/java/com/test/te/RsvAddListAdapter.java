@@ -73,7 +73,7 @@ public class RsvAddListAdapter extends BaseAdapter  {
             holder = (ViewHolder)convertView.getTag();
         }
         holder.buttonOK.setTag(position);
-        holder.pCode.setText(Data.allpCode.get(position).getName()+Data.allpCode.get(position).getpCode());
+        holder.pCode.setText(Data.allpCode.get(position).getpCode()+Data.allpCode.get(position).getName());
         return convertView;
     }
 

@@ -30,8 +30,8 @@ class InfoUtils {
         if(this.position!=null)
         {
             data=  data.replace("#",position);
-            System.out.println("send:"+data);
         }
+        System.out.println("send:"+data);
         data = data.toUpperCase();
         DataInputStream in = null;
         DataOutputStream out;
@@ -59,7 +59,7 @@ class InfoUtils {
             //   out.close();
 
             System.out.println("rec:"+mess);
-           if(position==null&&mess!=null)
+           if(position==null&&mess!=null&&mess.contains("&"))
            {
                this.position = mess.substring(mess.indexOf('&'));
            }
