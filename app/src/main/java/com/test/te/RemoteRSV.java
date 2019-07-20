@@ -81,14 +81,6 @@ public class RemoteRSV extends Fragment {
                                     System.out.println("cc："+count);
                                     for (int i = 0; i <count; i++) {
                                         System.out.println(i);
-                                        if(exit)
-                                        {
-
-                                            Looper.prepare();
-                                            Toast.makeText(getContext(),"停止成功",Toast.LENGTH_SHORT).show();
-                                            Looper.loop();
-                                            break;
-                                        }
                                         String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataLists.get(i).getAddress() + "0001#";
                                         if(data.contains("null"))
                                         {
@@ -115,7 +107,7 @@ public class RemoteRSV extends Fragment {
                                                 }
                                             }
                                         }
-                                        Thread.sleep(1000);
+                                        Thread.sleep(400);
                                     }
                                 } catch (IOException e) {
                                     e.printStackTrace();
@@ -130,7 +122,7 @@ public class RemoteRSV extends Fragment {
                 }
                 else
                 {
-                    Toast.makeText(getContext(),"正在停止",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"停止循环读取",Toast.LENGTH_SHORT).show();
                     exit = true;
                 }
             }
