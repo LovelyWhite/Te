@@ -23,12 +23,12 @@ public class AlertListAdapter extends BaseAdapter  {
     }
     @Override
     public int getCount() {
-        return Data.alerts.size();
+        return Data.dataAlerts.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return Data.alerts.get(position);
+        return Data.dataAlerts.get(position);
     }
 
     @Override
@@ -57,8 +57,8 @@ public class AlertListAdapter extends BaseAdapter  {
         {
             holder = (ViewHolder)convertView.getTag();
         }
-        holder.paraName.setText(Data.alerts.get(position).getpCode()+Data.alerts.get(position).getName());
-        holder.cValue.setText(Data.alerts.get(position).getcValue());
+        holder.paraName.setText(Data.dataAlerts.get(position).getpCode()+Data.dataAlerts.get(position).getName());
+        holder.cValue.setText(Data.dataAlerts.get(position).getcValue());
         return convertView;
     }
 

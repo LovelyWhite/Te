@@ -19,6 +19,7 @@ class InfoUtils {
     }
     String sendData(String data,Socket s,String position) throws IOException {
         long timeout = 3000;
+        System.out.println("p"+position);
         long now = System.currentTimeMillis();
         this.s = s;
         this.position = position;

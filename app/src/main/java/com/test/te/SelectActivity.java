@@ -127,6 +127,7 @@ public class SelectActivity extends AppCompatActivity {
                 //存pCode
                 SharedPreferences userSettings = getSharedPreferences("pCodeShowed", 0);
                 Data.showed = userSettings.getString(Data.devices.get(Data.cDevicePosition).getDeviceID(),"");
+                Data.aShowed = userSettings.getString("a"+Data.devices.get(Data.cDevicePosition).getDeviceID(),"");
                 System.out.println(Data.showed);
                 //  Data.getExcel("DeviceCode",this);
                 //模拟数据
@@ -278,6 +279,7 @@ public class SelectActivity extends AppCompatActivity {
                                                     temp.setDeviceID(id);
                                                     temp.setDevicePW(pw);
                                                     temp.setSocket(infoUtils.getSocket());
+                                                    temp.setPosition(infoUtils.getPosition());
                                                     Data.devices.add(temp);
                                                     Message m = new Message();
                                                     m.what = 0;//验证成功

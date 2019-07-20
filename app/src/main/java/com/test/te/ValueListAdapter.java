@@ -93,7 +93,7 @@ public class ValueListAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.paraName.setText(Data.allpCode.get(position).getpCode()+Data.allpCode.get(position).getName());
+        holder.paraName.setText(Data.dataLists.get(position).getpCode()+Data.dataLists.get(position).getName());
         holder.cValue.setText(Data.dataLists.get(position).getcValue());
         final ViewHolder finalHolder = holder;
         holder.option.setOnClickListener(new View.OnClickListener() {

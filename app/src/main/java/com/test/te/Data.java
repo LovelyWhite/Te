@@ -20,9 +20,11 @@ import java.util.List;
 import java.util.Vector;
 
 public class Data {
-   static Vector<CValue> alerts = new Vector<>();
+   static Vector<CValue> allAlerts = new Vector<>();
+   static Vector<CValue> dataAlerts = new Vector<>();
    static Vector<Device> devices =new Vector<>();
-   static String showed;   static DeviceCtrl ctrl = new DeviceCtrl();
+   static String showed,aShowed;
+   static DeviceCtrl ctrl = new DeviceCtrl();
    //远程读设参的数组
    static List<CValue> dataLists = new ArrayList<>();
    static List<CValue> allpCode = new ArrayList<>();
@@ -147,7 +149,7 @@ public class Data {
          Statement s = conn.createStatement();
          ResultSet  ddrs=dbmd.getTables(null,null,"%",null);
           while(ddrs.next()) {
-            System.out.println(ddrs.getString(3));
+           // System.out.println(ddrs.getString(3));
             if (ddrs.getString(3).contains("P")) {
                //     System.out.println(ddrs.getString(3));
                ResultSet rs = s.executeQuery("select * from " + ddrs.getString(3));
@@ -166,6 +168,7 @@ public class Data {
                      cValue.setAddress(ress.replace("H", ""));
                   }
                   if (!cValue.getpCode().equals("")) {
+//                     System.out.println("add+p:"+cValue.getpCode());
                      if (showed.contains(cValue.getpCode()))
                         dataLists.add(cValue);
                      else
@@ -197,10 +200,21 @@ public class Data {
                      {
                         System.out.println(cValue.getpCode());
                         if(showed.contains(cValue.getpCode()))
+                        {
                            dataLists.add(cValue);
+                        }
                         else
+                        {
                            allpCode.add(cValue);
-                        alerts.add(cValue);
+                        }
+                        if(aShowed.contains(cValue.getpCode()))
+                        {
+                           dataAlerts.add(cValue);
+                        }
+                        else
+                        {
+                           allAlerts.add(cValue);
+                        }
                      }
                   }
                }
@@ -230,6 +244,10 @@ public class Data {
          ddrs.close();
          s.close();
          conn.close();
+//         Data.dataLists.forEach((e)->
+//         {
+//            System.out.println("eee:"+e.getpCode());
+//         });
          return true;
       }
       catch (Exception e)

@@ -105,28 +105,39 @@ public class MainActivity extends AppCompatActivity {
         {
             remoteRSV.notifyDataSetChanged();
         }
+        else if(resultCode==2)
+        {
+            alarmRecord.notifyDataSetChanged();
+        }
     }
     public void commit() {
         SharedPreferences userSettings = getSharedPreferences("pCodeShowed", 0);
         SharedPreferences.Editor editor = userSettings.edit();
         editor.putString(Data.devices.get(Data.cDevicePosition).getDeviceID(), Data.showed);
+        editor.putString("a"+Data.devices.get(Data.cDevicePosition).getDeviceID(), Data.aShowed);
         editor.apply();
     }
 
     @Override
     protected void onDestroy() {
-        Data.alerts.clear();
+        Data.dataAlerts.clear();
+        Data.allAlerts.clear();
         if(alarmRecord!=null && alarmRecord.alertListAdapter!=null)
         {
             alarmRecord.notifyDataSetChanged();
         }
         Data.showed = "";
+        Data.aShowed = "";
         //远程读设参的数组
         Data.dataLists.clear();
         Data.allpCode.clear();
         if(remoteRSV!=null&&remoteRSV.valueListAdapter!=null)
         {
             remoteRSV.notifyDataSetChanged();
+        }
+        if(alarmRecord!=null&&alarmRecord.alertListAdapter!=null)
+        {
+            alarmRecord.notifyDataSetChanged();
         }
         Data.nowTable = 0;
         Data.cDevicePosition = -1;

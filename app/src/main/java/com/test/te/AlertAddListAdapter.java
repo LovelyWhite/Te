@@ -1,8 +1,6 @@
 package com.test.te;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,25 +8,23 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.test.te.model.CValue;
-
-public class RsvAddListAdapter extends BaseAdapter  {
+public class AlertAddListAdapter extends BaseAdapter  {
     private LayoutInflater layoutInflater;
     Activity fContext;
 
-    public RsvAddListAdapter(Activity context)
+    public AlertAddListAdapter(Activity context)
     {
         fContext = context;
         layoutInflater  = LayoutInflater.from(context);
     }
     @Override
     public int getCount() {
-        return Data.allpCode.size();
+        return Data.allAlerts.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return Data.allpCode.get(position);
+        return Data.allAlerts.get(position);
     }
 
     @Override
@@ -56,16 +52,16 @@ public class RsvAddListAdapter extends BaseAdapter  {
                 @Override
                 public void onClick(View v) {
                     int p =(int) finalHolder.buttonOK.getTag();
-                    Data.showed+=Data.allpCode.get(p).getpCode();
-                    ((RsvAddActivity)fContext).commit();
-                    Data.dataLists.add(Data.allpCode.get(p));
+                    Data.aShowed+=Data.allAlerts.get(p).getpCode();
+                    ((AlertAddActivity)fContext).commit();
+                    Data.dataAlerts.add(Data.allAlerts.get(p));
 //                    Data.dataLists.forEach((e)->
 //                    {
 //                        System.out.print(e.getpCode());
 //                    });
-                    fContext.setResult(1);
+                    fContext.setResult(2);
                     System.out.println(p);
-                    Data.allpCode.remove(p);
+                    Data.allAlerts.remove(p);
                     notifyDataSetChanged();
                 }
             });
@@ -76,7 +72,7 @@ public class RsvAddListAdapter extends BaseAdapter  {
             holder = (ViewHolder)convertView.getTag();
         }
         holder.buttonOK.setTag(position);
-        holder.pCode.setText(Data.allpCode.get(position).getpCode()+Data.allpCode.get(position).getName());
+        holder.pCode.setText(Data.allAlerts.get(position).getpCode()+Data.allAlerts.get(position).getName());
         return convertView;
     }
 
