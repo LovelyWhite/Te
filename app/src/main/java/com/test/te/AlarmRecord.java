@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,7 +27,10 @@ public class AlarmRecord extends Fragment {
 
     ListView alertList;
     Button read,add;
+
     public AlertListAdapter alertListAdapter;
+    private Handler handler;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -35,6 +40,19 @@ public class AlarmRecord extends Fragment {
         add = view.findViewById(R.id.add);
         alertListAdapter = new AlertListAdapter(view.getContext(),this);
         alertList.setAdapter(alertListAdapter);
+        handler = new Handler(message -> {
+            switch (message.what)
+            {
+                case 1:
+                    notifyDataSetChanged();
+                    Toast.makeText(getContext(),"读取完成",Toast.LENGTH_SHORT).show();
+                    break;
+                case 2:
+                    Toast.makeText(getContext(),"开始读取",Toast.LENGTH_SHORT).show();
+                    break;
+            }
+            return false;
+        });
         alertList.setOnItemLongClickListener((adapterView, view1, i, l) -> {
             System.out.println("sooo:"+i);
             new AlertDialog.Builder(getContext())
@@ -65,6 +83,9 @@ public class AlarmRecord extends Fragment {
           new Thread(() -> {
               try
               {
+                  Message m = new Message();
+                  m.what = 2;
+                  handler.sendMessage(m);
                   int count = alertListAdapter.getCount();
                   for (int i = 0; i <count; i++) {
                       System.out.println(i);
@@ -96,6 +117,9 @@ public class AlarmRecord extends Fragment {
                           }
                       }
                   }
+                  m = new Message();
+                  m.what = 1;
+                  handler.sendMessage(m);
               }
               catch (IOException e) {
                   e.printStackTrace();
