@@ -28,5 +28,11 @@
             android:gravity="center"
             android:hint="未设定"
             android:lines="1" />
+        <Button
+            android:id="@+id/remove"
+            android:layout_width="70dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/button"
+            android:text="删除" />
     </LinearLayout>
 </LinearLayout>

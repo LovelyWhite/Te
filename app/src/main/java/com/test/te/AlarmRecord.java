@@ -53,19 +53,6 @@ public class AlarmRecord extends Fragment {
             }
             return false;
         });
-        alertList.setOnItemLongClickListener((adapterView, view1, i, l) -> {
-            System.out.println("sooo:"+i);
-            new AlertDialog.Builder(getContext())
-                    .setTitle("是否删除？")
-                    .setPositiveButton("确定", (dialogInterface, i1) -> {
-                        Data.aShowed = Data.aShowed.replace(Data.dataAlerts.get(i).getpCode(), "");
-                        Data.mainActivity.commit();
-                        Data.allAlerts.add(Data.dataAlerts.get(i));
-                        Data.dataAlerts.remove(i);
-                        alertListAdapter.notifyDataSetChanged();
-                    }).create().show();
-            return true;
-        });
         return view;
     }
     @Override

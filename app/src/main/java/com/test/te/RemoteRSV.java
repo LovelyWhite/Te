@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
@@ -38,7 +39,9 @@ public class RemoteRSV extends Fragment {
     View remoteView;
     Thread t;
     Handler handler;
-    boolean exit = false;
+    boolean exit = false,clickable = true;
+    private EditText timeInterval;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -51,6 +54,7 @@ public class RemoteRSV extends Fragment {
         cValueList.setAdapter(valueListAdapter);
         rsvAdd = view.findViewById(R.id.rsvAdd);
         repeat = view.findViewById(R.id.repeat);
+        timeInterval = view.findViewById(R.id.timeInterval);
         handler = new Handler(message -> {
             switch (message.what)
             {
@@ -62,7 +66,6 @@ public class RemoteRSV extends Fragment {
         remoteView = view;
         return  view;
     }
-
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -75,56 +78,72 @@ public class RemoteRSV extends Fragment {
         repeat.setOnCheckedChangeListener((compoundButton, b) -> {
             if(b)
             {
-                Toast.makeText(getContext(),"开始循环读取",Toast.LENGTH_SHORT).show();
-                exit = false;
-                t = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        while (!exit)
-                        {
-                            try {
-                                int count = valueListAdapter.getCount();
-                                System.out.println("cc："+count);
-                                for (int i = 0; i <count; i++) {
-                                    System.out.println(i);
-                                    String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataLists.get(i).getAddress() + "0001#";
-                                    if(data.contains("null"))
-                                    {
-                                    }
-                                    else
-                                    {
-                                        String result = infoUtils.sendData(data
-                                                , Data.devices.get(Data.cDevicePosition).getSocket()
-                                                ,Data.devices.get(Data.cDevicePosition).getPosition());
-                                        result = result==null?"":result;
-                                        if (result.contains("Drive No online")) {
-                                        } else if(!result.equals("")) {
-                                            String a = result.split("&")[1].substring(4, 8);
-                                            String b =Data.dataLists.get(i).getMinUnit();
-                                            b= b==null?"1":b;
-                                            double v = Integer.parseInt(a, 16) * Double.parseDouble(b);
-                                            if(!b.contains("."))
-                                            {
-                                                Data.dataLists.get(i).setcValue("" + (int)v);
-                                            }
-                                            else
-                                            {
-                                                Data.dataLists.get(i).setcValue("" + v);
-                                            }
-                                        }
-                                    }
-                                    Message m = new Message();
-                                    m.what = 1;
-                                    handler.sendMessage(m);
-                                }
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+               if(clickable)
+               {
+                   Toast.makeText(getContext(),"开始循环读取",Toast.LENGTH_SHORT).show();
+                   clickable = false;
+                   exit = false;
+                   t = new Thread(new Runnable() {
+                       @Override
+                       public void run() {
+                           while (!exit)
+                           {
+                               try {
+                                   int count = valueListAdapter.getCount();
+                                   for (int i = 0; i <count; i++) {
+                                       System.out.println(i);
+                                       String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataLists.get(i).getAddress() + "0001#";
+                                       if(data.contains("null"))
+                                       {
+                                       }
+                                       else
+                                       {
+                                           String result = infoUtils.sendData(data
+                                                   , Data.devices.get(Data.cDevicePosition).getSocket()
+                                                   ,Data.devices.get(Data.cDevicePosition).getPosition());
+                                           result = result==null?"":result;
+                                           if (result.contains("Drive No online")) {
+                                           } else if(!result.equals("")) {
+                                               String a = result.split("&")[1].substring(4, 8);
+                                               String b =Data.dataLists.get(i).getMinUnit();
+                                               b= b==null?"1":b;
+                                               double v = Integer.parseInt(a, 16) * Double.parseDouble(b);
+                                               if(!b.contains("."))
+                                               {
+                                                   Data.dataLists.get(i).setcValue("" + (int)v);
+                                               }
+                                               else
+                                               {
+                                                   Data.dataLists.get(i).setcValue("" + v);
+                                               }
+                                           }
+                                       }
+                                       Message m = new Message();
+                                       m.what = 1;
+                                       handler.sendMessage(m);
+                                   }
+                                   if(exit)
+                                   {
+                                       break;
+                                   }
+                                   Thread.sleep(timeInterval.getText().toString().equals("")?0:Long.parseLong(timeInterval.getText().toString())*1000);
+                               } catch (IOException e) {
+                                   e.printStackTrace();
+                               } catch (InterruptedException e) {
+                                   e.printStackTrace();
+                               }
 
-                        }
-                    }
-                });
-                t.start();
+                           }
+                           clickable  = true;
+                       }
+                   });
+                   t.start();
+               }
+               else
+               {
+                   Toast.makeText(getContext(),"当前循环未停止",Toast.LENGTH_SHORT).show();
+                   repeat.setChecked(false);
+               }
             }
             else
             {

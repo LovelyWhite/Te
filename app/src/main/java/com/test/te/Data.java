@@ -159,6 +159,7 @@ public class Data {
                   cValue.setpCode(rs.getString(2));
                   cValue.setName(rs.getString(3));
                   String unit = rs.getString(5);
+                  System.out.println(rs.getString(2));
                   if (unit != null && !unit.equals("")) {
                      //  System.out.println(getMatcher("[^\\d.]*", unit));
                      cValue.setMinUnit(unit.replaceAll("[^\\d.]*", ""));
@@ -223,20 +224,29 @@ public class Data {
                ResultSet rs = s.executeQuery("select * from " + ddrs.getString(3));
                while (rs.next()) {
                  int id =  rs.getInt(1);
+                  System.out.println("id"+id);
+                  //启动
                  if(id == 2)
                  {
                     ctrl.setAd_start(rs.getString(3).replace("H",""));
                     ctrl.setStart(rs.getString(4).replace("H",""));
                  }
+                 //停止
                  else if(id==3)
                  {
                     ctrl.setAd_stop(rs.getString(3).replace("H",""));
                     ctrl.setStop(rs.getString(4).replace("H",""));
                  }
+                 //设定频率
                  else if(id == 5)
                  {
                     ctrl.setAd_freq(rs.getString(3).replace("H",""));
                     ctrl.setFreq(rs.getString(4).replace("H",""));
+                 }
+                 else if(id == 6)
+                 {
+                    ctrl.setAd_output (rs.getString(3).replace("H",""));
+                    ctrl.setOutPut(rs.getString(4).replace("H",""));
                  }
                }
             }

@@ -4,9 +4,11 @@ public class DeviceCtrl {
     String start;
     String stop;
     String Freq;
+    String outPut;
     String ad_start;
     String ad_stop;
     String ad_freq;
+    String ad_output;
 
     public String getStart() {
         return start;
@@ -54,5 +56,21 @@ public class DeviceCtrl {
 
     public void setAd_freq(String ad_freq) {
         this.ad_freq = ad_freq;
+    }
+
+    public String getOutPut() {
+        return outPut;
+    }
+
+    public void setOutPut(String outPut) {
+        this.outPut = outPut;
+    }
+
+    public String getAd_output() {
+        return ad_output;
+    }
+
+    public void setAd_output(String ad_output) {
+        this.ad_output = ad_output;
     }
 }

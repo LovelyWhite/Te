@@ -50,17 +50,12 @@
             android:layout_margin="5dp"
             android:gravity="start">
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="报警信息"
-                android:layout_marginStart="10dp" />
-            <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="长按项目删除"
-                android:textSize="10sp"
+                android:text="报警信息"
+                android:layout_marginStart="10dp"
                 android:layout_weight="1"
-                android:layout_marginStart="10dp" />
+                />
            <Button
                android:id="@+id/read"
                android:layout_width="70dp"
@@ -73,7 +68,9 @@
                 android:layout_width="70dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/button"
-                android:text="添加"/>
+                android:text="添加"
+                android:layout_marginRight="15dp"
+                />
         </LinearLayout>
         <ListView
             android:id="@+id/alertList"

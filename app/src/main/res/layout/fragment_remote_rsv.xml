@@ -15,10 +15,28 @@
             android:gravity="start">
             <TextView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:text="显示的项目"
                 android:layout_marginLeft="10dp"
+                android:gravity="center"
                 android:layout_weight="1"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="时间间隔"/>
+            <EditText
+                android:id="@+id/timeInterval"
+                android:layout_width="60dp"
+                android:gravity="center"
+                android:text="10"
+                android:layout_height="match_parent"
+                />
+            <TextView
+                android:layout_width="10dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="S"/>
             <android.support.v7.widget.AppCompatCheckBox
                 android:id="@+id/repeat"
                 android:layout_width="wrap_content"
@@ -28,6 +46,7 @@
                 android:id="@+id/rsvAdd"
                 android:layout_width="70dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginEnd="15dp"
                 android:layout_height="match_parent"
                 android:background="@drawable/button"
                 android:layout_gravity="end"
