@@ -91,7 +91,6 @@ public class RemoteRSV extends Fragment {
                                try {
                                    int count = valueListAdapter.getCount();
                                    for (int i = 0; i <count; i++) {
-                                       System.out.println(i);
                                        String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataLists.get(i).getAddress() + "0001#";
                                        if(data.contains("null"))
                                        {
@@ -103,8 +102,10 @@ public class RemoteRSV extends Fragment {
                                                    ,Data.devices.get(Data.cDevicePosition).getPosition());
                                            result = result==null?"":result;
                                            if (result.contains("Drive No online")) {
-                                           } else if(!result.equals("")) {
+                                           } else if(!result.equals("")&&result.contains("&")) {
                                                String a = result.split("&")[1].substring(4, 8);
+                                               if(Data.dataLists.size()==0)
+                                                   break;
                                                String b =Data.dataLists.get(i).getMinUnit();
                                                b= b==null?"1":b;
                                                double v = Integer.parseInt(a, 16) * Double.parseDouble(b);
@@ -114,7 +115,7 @@ public class RemoteRSV extends Fragment {
                                                }
                                                else
                                                {
-                                                   Data.dataLists.get(i).setcValue("" + v);
+                                                   Data.dataLists.get(i).setcValue("" + Math.rint(v));
                                                }
                                            }
                                        }

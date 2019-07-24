@@ -10,9 +10,10 @@
         android:layout_gravity="start"
         android:background="@drawable/input_white_radius"
         android:orientation="horizontal">
-
         <TextView
             android:id="@+id/paraName"
+            android:layout_marginStart="10dp"
+            android:textSize="14sp"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -21,7 +22,7 @@
 
         <TextView
             android:id="@+id/cValue"
-            android:layout_width="100dp"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"

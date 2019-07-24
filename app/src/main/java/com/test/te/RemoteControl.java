@@ -1,6 +1,7 @@
 package com.test.te;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -44,37 +45,53 @@ public class RemoteControl extends Fragment {
        handler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
-                switch (msg.what) {
-                    case -1:
-                        Toast.makeText(getContext(), "请输入值", Toast.LENGTH_LONG).show();
-                        break;
-                    case 1:
-                        Toast.makeText(getContext(), "成功", Toast.LENGTH_LONG).show();
-                        break;
-                    case -2:
-                        Toast.makeText(getContext(), "设备不在线", Toast.LENGTH_LONG).show();
-                        break;
-                    case -3:
-                        Toast.makeText(getContext(), "失败", Toast.LENGTH_LONG).show();
-                        break;
-                    case 8:
-                        Toast.makeText(getContext(), "成功", Toast.LENGTH_LONG).show();
-                        freqNum.setText(Data.ctrl.getFreq());
-                        readFreq.setEnabled(true);
-                        break;
-                    case 9:
-                        Toast.makeText(getContext(), "成功", Toast.LENGTH_LONG).show();
-                        stateImage.setImageResource(R.drawable.open);
-                        currentState.setText("启动");
-                        getState.setEnabled(true);
-                        break;
-                    case 10:
-                        Toast.makeText(getContext(), "成功", Toast.LENGTH_LONG).show();
-                        stateImage.setImageResource(R.drawable.close);
-                        currentState.setText("停止");
-                        getState.setEnabled(true);
-                        break;
+                Context context = getContext();
+                if(context!=null)
+                {
+                    switch (msg.what) {
+                        case -1:
+                            Toast.makeText(context, "请输入值", Toast.LENGTH_LONG).show();
+                            break;
+                        case 1:
+                            Toast.makeText(context, "成功", Toast.LENGTH_LONG).show();
+                            break;
+                        case -2:
+                            Toast.makeText(context, "设备不在线", Toast.LENGTH_LONG).show();
+                            break;
+                        case -3:
+                            Toast.makeText(context, "失败", Toast.LENGTH_LONG).show();
+                            break;
+                        case 8:
+                            Toast.makeText(context, "成功", Toast.LENGTH_LONG).show();
+                            freqNum.setText(Data.ctrl.getFreq());
+                            readFreq.setEnabled(true);
+                            break;
+                        case 9:
+                            stateImage.setImageResource(R.drawable.open);
+                            currentState.setText("启动");
+                            break;
+                        case 10:
+                            stateImage.setImageResource(R.drawable.close);
+                            currentState.setText("停止");
+                            break;
+                        case 11:
+                            getState.setEnabled(true);
+                            break;
+                        case 12:
+                            start.setEnabled(true);
+                            break;
+                        case 13:
+                            stop.setEnabled(true);
+                            break;
+                        case 14:
+                            setFreq.setEnabled(true);
+                            break;
+                        case 15:
+                            readFreq.setEnabled(true);
+                            break;
+                    }
                 }
+
                 return false;
             }
         });
@@ -117,12 +134,15 @@ public class RemoteControl extends Fragment {
                                 m.what = -3;
                                 handler.sendMessage(m);
                             }
+                            //释放按钮
+                            Message m = new Message();
+                            m.what = 12;
+                            handler.sendMessage(m);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 }).start();
-                start.setEnabled(true);
             }
         });
         stop.setOnClickListener(new View.OnClickListener() {
@@ -157,13 +177,18 @@ public class RemoteControl extends Fragment {
                                 m.what = -3;
                                 handler.sendMessage(m);
                             }
+
+                            //释放按钮
+                            Message m = new Message();
+                            m.what = 13;
+                            handler.sendMessage(m);
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
 
                     }
                 }).start();
-                stop.setEnabled(true);
             }
         });
         setFreq.setOnClickListener(new View.OnClickListener() {
@@ -183,9 +208,9 @@ public class RemoteControl extends Fragment {
                         {
                             try {
                                 String num =  freqNum.getText().toString();
-                                int n = Integer.parseInt(num);
+                                double n = Double.parseDouble(num);
                                 n*=100;
-                                num =  Integer.toHexString(n);
+                                num =  Integer.toHexString((int)n);
                                 if (num.length() == 1) {
                                     num = "000" + num;
                                 } else if (num.length() == 2) {
@@ -193,7 +218,7 @@ public class RemoteControl extends Fragment {
                                 } else if (num.length() == 3) {
                                     num = "0" + num;
                                 }
-                                String result = infoUtils.sendData(">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "06" + Data.ctrl.getAd_output() + num + "#"
+                                String result = infoUtils.sendData(">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "06" + Data.ctrl.getAd_freq() + num + "#"
                                         , Data.devices.get(Data.cDevicePosition).getSocket()
                                         , Data.devices.get(Data.cDevicePosition).getPosition());
                                 if(result.contains("Drive No online"))
@@ -214,6 +239,11 @@ public class RemoteControl extends Fragment {
                                     m.what = -3;
                                     handler.sendMessage(m);
                                 }
+
+                                //释放按钮
+                                Message m = new Message();
+                                m.what = 14;
+                                handler.sendMessage(m);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -240,7 +270,7 @@ public class RemoteControl extends Fragment {
                                         , Data.devices.get(Data.cDevicePosition).getPosition());
                                 result = result == null ? "" : result;
                                 if (result.contains("Drive No online")) {
-                                } else if (!result.equals("")) {
+                                } else if (!result.equals("")&&result.contains("&")) {
                                     String a = result.split("&")[1].substring(4, 8);
                                     String b = "0.01";
                                     b = b == null ? "1" : b;
@@ -254,7 +284,10 @@ public class RemoteControl extends Fragment {
                                     m.what = 8;
                                     handler.sendMessage(m);
                                 }
-                                getState.setEnabled(true);
+                                //释放按钮
+                                Message m = new Message();
+                                m.what = 15;
+                                handler.sendMessage(m);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -307,6 +340,11 @@ public class RemoteControl extends Fragment {
 //                                        Data.ctrl.setAd_output("" + v);
 //                                    }
                                 }
+
+                                //释放按钮
+                                Message m = new Message();
+                                m.what = 11;
+                                handler.sendMessage(m);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

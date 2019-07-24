@@ -117,7 +117,7 @@ public class Data {
          String fileNames[] = context.getAssets().list("data");
          for (String fileName : fileNames) {
             InputStream is = context.getAssets().open("data/"+fileName);
-            System.out.println(file.getPath()+fileName);
+//            System.out.println(file.getPath()+fileName);
             File f = new File(file.getPath()+"/"+fileName);
             if(f.exists())
             {
@@ -159,7 +159,7 @@ public class Data {
                   cValue.setpCode(rs.getString(2));
                   cValue.setName(rs.getString(3));
                   String unit = rs.getString(5);
-                  System.out.println(rs.getString(2));
+//                  System.out.println(rs.getString(2));
                   if (unit != null && !unit.equals("")) {
                      //  System.out.println(getMatcher("[^\\d.]*", unit));
                      cValue.setMinUnit(unit.replaceAll("[^\\d.]*", ""));
@@ -199,7 +199,7 @@ public class Data {
                   {
                      if(cValue.getpCode().contains("U0"))
                      {
-                        System.out.println(cValue.getpCode());
+//                        System.out.println(cValue.getpCode());
                         if(showed.contains(cValue.getpCode()))
                         {
                            dataLists.add(cValue);
@@ -224,7 +224,7 @@ public class Data {
                ResultSet rs = s.executeQuery("select * from " + ddrs.getString(3));
                while (rs.next()) {
                  int id =  rs.getInt(1);
-                  System.out.println("id"+id);
+//                  System.out.println("id"+id);
                   //启动
                  if(id == 2)
                  {

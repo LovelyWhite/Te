@@ -37,25 +37,29 @@ public class RealTimeData extends Fragment {
         handler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message msg) {
-                switch (msg.what) {
-                    case -1:
-                        Toast.makeText(getContext(), "连接出现异常,请重新登录", Toast.LENGTH_LONG).show();
-                    case 1:
-                    {
-                        double tempc = sax(c);
-                        double tempd = sax(d);
-                        double tempe = sax(e);
-                        if(tempc-0<=0.000001)
+                Context context = getContext();
+                if(context!=null)
+                {
+                    switch (msg.what) {
+                        case -1:
+                            Toast.makeText(context, "连接出现异常,请重新登录", Toast.LENGTH_LONG).show();
+                        case 1:
                         {
-                            realFreqStatus.setText("停止");
+                            double tempc = sax(c);
+                            double tempd = sax(d);
+                            double tempe = sax(e);
+                            if(tempc-0<=0.000001)
+                            {
+                                realFreqStatus.setText("停止");
+                            }
+                            else
+                            {
+                                realFreqStatus.setText("运行中");
+                            }
+                            realOutFreq.setText(String.valueOf(tempc/100));
+                            realOutElec.setText(String.valueOf(tempd));
+                            realVolt.setText(String.valueOf(tempe));
                         }
-                       else
-                        {
-                            realFreqStatus.setText("运行中");
-                        }
-                        realOutFreq.setText(String.valueOf(tempc/100));
-                        realOutElec.setText(String.valueOf(tempd));
-                        realVolt.setText(String.valueOf(tempe));
                     }
                 }
                 return false;

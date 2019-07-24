@@ -142,7 +142,7 @@ public class ValueListAdapter extends BaseAdapter {
                                     if(data.contains("null"))
                                     {
                                         Message m = new Message();
-                                        m.what = -4;
+                                        m.what = -3;
                                         handler.sendMessage(m);
                                     }
                                    else
@@ -155,7 +155,7 @@ public class ValueListAdapter extends BaseAdapter {
                                             Message m = new Message();
                                             m.what = -2;//设备不在线
                                             handler.sendMessage(m);
-                                        } else if(!result.equals("")) {
+                                        } else if(!result.equals("")&&result.contains("&")) {
                                             String a = result.split("&")[1].substring(4, 8);
                                             String b =Data.dataLists.get(position).getMinUnit();
                                             b= b==null?"1":b;
@@ -166,7 +166,7 @@ public class ValueListAdapter extends BaseAdapter {
                                             }
                                             else
                                             {
-                                                Data.dataLists.get(position).setcValue("" + v);
+                                                Data.dataLists.get(position).setcValue("" + Math.rint(v));
                                             }
                                             Message m = new Message();
                                             m.what = 1;

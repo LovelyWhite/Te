@@ -26,7 +26,7 @@ import java.io.IOException;
 public class AlarmRecord extends Fragment {
 
     ListView alertList;
-    Button read,add;
+    Button read, add;
 
     public AlertListAdapter alertListAdapter;
     private Handler handler;
@@ -38,23 +38,29 @@ public class AlarmRecord extends Fragment {
         alertList = view.findViewById(R.id.alertList);
         read = view.findViewById(R.id.read);
         add = view.findViewById(R.id.add);
-        alertListAdapter = new AlertListAdapter(view.getContext(),this);
+        alertListAdapter = new AlertListAdapter(view.getContext(), this);
         alertList.setAdapter(alertListAdapter);
         handler = new Handler(message -> {
-            switch (message.what)
-            {
-                case 1:
-                    notifyDataSetChanged();
-                    Toast.makeText(getContext(),"读取完成",Toast.LENGTH_SHORT).show();
-                    break;
-                case 2:
-                    Toast.makeText(getContext(),"开始读取",Toast.LENGTH_SHORT).show();
-                    break;
-            }
+            Context context = getContext();
+           if(context!=null)
+           {
+               switch (message.what) {
+                   case 1:
+                       notifyDataSetChanged();
+                       break;
+                   case 2:
+                       Toast.makeText(context, "开始读取", Toast.LENGTH_SHORT).show();
+                       break;
+                   case 3:
+                       Toast.makeText(context, "读取完成", Toast.LENGTH_SHORT).show();
+                       read.setEnabled(true);
+               }
+           }
             return false;
         });
         return view;
     }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -63,63 +69,57 @@ public class AlarmRecord extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getContext(), AlertAddActivity.class);
-                startActivityForResult(intent,2);
+                startActivityForResult(intent, 2);
             }
         });
         read.setOnClickListener(view1 -> {
-          new Thread(() -> {
-              try
-              {
-                  Message m = new Message();
-                  m.what = 2;
-                  handler.sendMessage(m);
-                  int count = alertListAdapter.getCount();
-                  for (int i = 0; i <count; i++) {
-                      System.out.println(i);
+            read.setEnabled(false);
+            new Thread(() -> {
+                try {
+                    Message m = new Message();
+                    m.what = 2;
+                    handler.sendMessage(m);
+                    int count = alertListAdapter.getCount();
+                    for (int i = 0; i < count; i++) {
+                        System.out.println(i);
 
-                      String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataAlerts.get(i).getAddress() + "0001#";
-                      if(data.contains("null"))
-                      {
-                      }
-                      else
-                      {
-                          String result = infoUtils.sendData(data
-                                  , Data.devices.get(Data.cDevicePosition).getSocket()
-                                  ,Data.devices.get(Data.cDevicePosition).getPosition());
-                          result = result==null?"":result;
-                          if (result.contains("Drive No online")) {
-                          } else if(!result.equals("")) {
-                              String a = result.split("&")[1].substring(4, 8);
-                              String b =Data.dataAlerts.get(i).getMinUnit();
-                              b= b==null?"1":b;
-                              double v = Integer.parseInt(a, 16) * Double.parseDouble(b);
-                              if(!b.contains("."))
-                              {
-                                  Data.dataAlerts.get(i).setcValue("" + (int)v);
-                              }
-                              else
-                              {
-                                  Data.dataAlerts.get(i).setcValue("" + v);
-                              }
-                          }
-                      }
-                  }
-                  m = new Message();
-                  m.what = 1;
-                  handler.sendMessage(m);
-              }
-              catch (IOException e) {
-                  e.printStackTrace();
-              }
-          }).start();
+                        String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataAlerts.get(i).getAddress() + "0001#";
+                        if (data.contains("null")) {
+                        } else {
+                            String result = infoUtils.sendData(data
+                                    , Data.devices.get(Data.cDevicePosition).getSocket()
+                                    , Data.devices.get(Data.cDevicePosition).getPosition());
+                            result = result == null ? "" : result;
+                            if (result.contains("Drive No online")) {
+                            } else if (!result.equals("")) {
+                                String a = result.split("&")[1].substring(4, 8);
+                                if(Data.dataAlerts.size()==0)
+                                    break;
+                                String b = Data.dataAlerts.get(i).getMinUnit();
+                                b = b == null ? "1" : b;
+                                double v = Integer.parseInt(a, 16) * Double.parseDouble(b);
+                                if (!b.contains(".")) {
+                                    Data.dataAlerts.get(i).setcValue("" + (int) v);
+                                } else {
+                                    Data.dataAlerts.get(i).setcValue("" + Math.rint(v));
+                                }
+                                m = new Message();
+                                m.what = 1;
+                                handler.sendMessage(m);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Message m = new Message();
+                m.what = 3;
+                handler.sendMessage(m);
+            }).start();
         });
-     }
-
-    public void notifyDataSetChanged()
-    {
-        alertListAdapter.notifyDataSetChanged();
     }
 
-
-
+    public void notifyDataSetChanged() {
+        alertListAdapter.notifyDataSetChanged();
+    }
 }

@@ -17,9 +17,9 @@ class InfoUtils {
     {
         return this.s;
     }
-    String sendData(String data,Socket s,String position) throws IOException {
-        long timeout = 3000;
-        System.out.println("p"+position);
+    synchronized String sendData(String data,Socket s,String position) throws IOException {
+        long timeout = 20000;
+       // System.out.println("p"+position);
         long now = System.currentTimeMillis();
         this.s = s;
         this.position = position;
@@ -44,14 +44,14 @@ class InfoUtils {
             //out.flush();
             // out.writeUTF("GT200-123TM321");
             //out.flush();
-            byte[] a ;
+            byte[] a = new byte[1000];
             //  while (true) {
             while (System.currentTimeMillis()-now <timeout){
                 {
                     if (in.available() > 0) {
-                        a = new byte[in.available()];
-                        in.read(a);
-                        mess = new String(a);
+                       // a = new byte[in.available()];
+                        int len = in.read(a);
+                        mess = new String(a,0,len);
                         break;
                     }
                 }

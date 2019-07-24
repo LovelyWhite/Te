@@ -38,7 +38,7 @@ public class RsvAddListAdapter extends BaseAdapter  {
 
     static class ViewHolder
     {
-        TextView pCode;
+        TextView pCode,name;
         Button buttonOK;
     }
 
@@ -49,7 +49,8 @@ public class RsvAddListAdapter extends BaseAdapter  {
         {
             convertView = layoutInflater.inflate(R.layout.rsv_add_item,null);
             holder = new ViewHolder();
-            holder.pCode = convertView.findViewById(R.id.rsvAddName);
+            holder.pCode = convertView.findViewById(R.id.rsvAddpCode);
+            holder.name = convertView.findViewById(R.id.rsvAddName);
             holder.buttonOK = convertView.findViewById(R.id.rsvAdd_OK);
             final ViewHolder finalHolder = holder;
             holder.buttonOK.setOnClickListener(new View.OnClickListener() {
@@ -76,7 +77,8 @@ public class RsvAddListAdapter extends BaseAdapter  {
             holder = (ViewHolder)convertView.getTag();
         }
         holder.buttonOK.setTag(position);
-        holder.pCode.setText(Data.allpCode.get(position).getpCode()+Data.allpCode.get(position).getName());
+        holder.pCode.setText(Data.allpCode.get(position).getpCode());
+        holder.name.setText(Data.allpCode.get(position).getName());
         return convertView;
     }
 
