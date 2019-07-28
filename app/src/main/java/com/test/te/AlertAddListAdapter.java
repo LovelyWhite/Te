@@ -61,7 +61,7 @@ public class AlertAddListAdapter extends BaseAdapter  {
 //                        System.out.print(e.getpCode());
 //                    });
                     fContext.setResult(2);
-                    System.out.println(p);
+                //    System.out.println(p);
                     Data.allAlerts.remove(p);
                     notifyDataSetChanged();
                 }

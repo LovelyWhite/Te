@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -37,8 +38,8 @@ public class RemoteRSV extends Fragment {
     LayoutInflater inflater;
     CheckBox repeat;
     View remoteView;
-    Thread t;
     Handler handler;
+    TextView currentProgress;
     boolean exit = false,clickable = true;
     private EditText timeInterval;
 
@@ -54,12 +55,16 @@ public class RemoteRSV extends Fragment {
         cValueList.setAdapter(valueListAdapter);
         rsvAdd = view.findViewById(R.id.rsvAdd);
         repeat = view.findViewById(R.id.repeat);
+        currentProgress = view.findViewById(R.id.currentProgress);
         timeInterval = view.findViewById(R.id.timeInterval);
         handler = new Handler(message -> {
-            switch (message.what)
-            {
+            switch (message.what) {
                 case 1:
-                    notifyDataSetChanged();break;
+                    currentProgress.setText(message.arg1 + "/" + message.arg2);
+                    notifyDataSetChanged();
+                    break;
+                case 2:
+                    Toast.makeText(getContext(),"循环读取完成",Toast.LENGTH_SHORT).show();
             }
             return false;
         });
@@ -70,10 +75,17 @@ public class RemoteRSV extends Fragment {
     public void onViewCreated(@NonNull final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         rsvAdd.setOnClickListener(v -> {
-            exit = true;
-            repeat.setChecked(false);
-            Intent intent = new Intent(remoteView.getContext(), RsvAddActivity.class);
-            startActivityForResult(intent,1);
+          if(Data.t1==null)
+          {
+              exit = true;
+              repeat.setChecked(false);
+              Intent intent = new Intent(remoteView.getContext(), RsvAddActivity.class);
+              startActivityForResult(intent,1);
+          }
+          else
+          {
+              Toast.makeText(getContext(),"当前任务未停止",Toast.LENGTH_SHORT).show();
+          }
         });
         repeat.setOnCheckedChangeListener((compoundButton, b) -> {
             if(b)
@@ -83,7 +95,7 @@ public class RemoteRSV extends Fragment {
                    Toast.makeText(getContext(),"开始循环读取",Toast.LENGTH_SHORT).show();
                    clickable = false;
                    exit = false;
-                   t = new Thread(new Runnable() {
+                   Data.t1 = new Thread(new Runnable() {
                        @Override
                        public void run() {
                            while (!exit)
@@ -121,6 +133,8 @@ public class RemoteRSV extends Fragment {
                                        }
                                        Message m = new Message();
                                        m.what = 1;
+                                       m.arg1 =i+1;
+                                       m.arg2 = count;
                                        handler.sendMessage(m);
                                    }
                                    if(exit)
@@ -128,6 +142,7 @@ public class RemoteRSV extends Fragment {
                                        break;
                                    }
                                    Thread.sleep(timeInterval.getText().toString().equals("")?0:Long.parseLong(timeInterval.getText().toString())*1000);
+
                                } catch (IOException e) {
                                    e.printStackTrace();
                                } catch (InterruptedException e) {
@@ -135,10 +150,14 @@ public class RemoteRSV extends Fragment {
                                }
 
                            }
+                           Message m = new Message();
+                           m.what = 2;
+                           handler.sendMessage(m);
                            clickable  = true;
+                           Data.t1 = null;
                        }
                    });
-                   t.start();
+                   Data.t1.start();
                }
                else
                {

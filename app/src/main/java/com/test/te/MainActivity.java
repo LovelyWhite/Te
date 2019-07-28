@@ -9,7 +9,12 @@ import android.support.design.widget.BottomNavigationView;
 
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.test.te.model.Device;
+
+import java.io.IOException;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,27 +31,36 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
+//            System.out.println("t1:"+Data.t1);
+//            System.out.println("t2:"+Data.t2);
+            if(Data.t1==null&&Data.t2==null)
+            {
+                switch (item.getItemId()) {
 //                case R.id.realTimeData://实时数据
 //                    showFragment(preTag, "realTimeData");
 //                    preTag = "realTimeData";
 //                    return true;
-                case R.id.RemoteControl://远程控制
-                    showFragment(preTag, "remoteControl");
-                    preTag = "remoteControl";
-                    return true;
-                case R.id.RemoteRSV://远程读设参
-                    showFragment(preTag, "remoteRSV");
-                    preTag = "remoteRSV";
-                    return true;
-                case R.id.AlarmRecord://报警记录
-                    showFragment(preTag, "alarmRecord");
-                    preTag = "alarmRecord";
-                    return true;
-                case R.id.HistoricalCurve://历史曲线
-                    showFragment(preTag, "historicalCurve");
-                    preTag = "historicalCurve";
-                    return true;
+                    case R.id.RemoteControl://远程控制
+                        showFragment(preTag, "remoteControl");
+                        preTag = "remoteControl";
+                        return true;
+                    case R.id.RemoteRSV://远程读设参
+                        showFragment(preTag, "remoteRSV");
+                        preTag = "remoteRSV";
+                        return true;
+                    case R.id.AlarmRecord://报警记录
+                        showFragment(preTag, "alarmRecord");
+                        preTag = "alarmRecord";
+                        return true;
+                    case R.id.HistoricalCurve://历史曲线
+                        showFragment(preTag, "historicalCurve");
+                        preTag = "historicalCurve";
+                        return true;
+                }
+            }
+            else
+            {
+                Toast.makeText(getApplicationContext(),"当前任务未停止",Toast.LENGTH_LONG).show();
             }
             return false;
         }
@@ -57,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //120.41.250.52
         BottomNavigationView navigation = findViewById(R.id.navigation);
+        TextView textView = findViewById(R.id.currentDevice);
+        textView.setText(Data.devices.get(Data.cDevicePosition).getDeviceName()+"--"+Data.devices.get(Data.cDevicePosition).getDeviceID());
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         buildFragments();
         Data.mainActivity = this;
@@ -120,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        Toast.makeText(MainActivity.this, "正在断开连接", Toast.LENGTH_LONG).show();
         Data.dataAlerts.clear();
         Data.allAlerts.clear();
         if(alarmRecord!=null && alarmRecord.alertListAdapter!=null)
@@ -141,6 +158,15 @@ public class MainActivity extends AppCompatActivity {
         }
         Data.nowTable = 0;
         Data.cDevicePosition = -1;
+        for (Device device : Data.devices) {
+            if (device.getSocket()!=null&& !device.getSocket().isClosed()) {
+                try {
+                    device.getSocket().close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
         super.onDestroy();
     }
 }

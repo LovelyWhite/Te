@@ -270,6 +270,10 @@ public class RemoteControl extends Fragment {
                                         , Data.devices.get(Data.cDevicePosition).getPosition());
                                 result = result == null ? "" : result;
                                 if (result.contains("Drive No online")) {
+                                    Message m = new Message();
+                                    m.what = -2;
+                                    handler.sendMessage(m);
+
                                 } else if (!result.equals("")&&result.contains("&")) {
                                     String a = result.split("&")[1].substring(4, 8);
                                     String b = "0.01";
@@ -317,7 +321,7 @@ public class RemoteControl extends Fragment {
                                     Message m = new Message();
                                     m.what = -2;
                                     handler.sendMessage(m);
-                                } else if (!result.equals("")) {
+                                } else if (!result.equals("")&&result.contains("&")) {
                                     String a = result.split("&")[1].substring(4, 8);
                                     String b = "0.01";
                                     b = b == null ? "1" : b;
@@ -349,7 +353,6 @@ public class RemoteControl extends Fragment {
                                 e.printStackTrace();
                             }
                         }
-
                     }
                 }).start();
             }

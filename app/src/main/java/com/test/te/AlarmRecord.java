@@ -18,7 +18,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 
@@ -30,6 +33,7 @@ public class AlarmRecord extends Fragment {
 
     public AlertListAdapter alertListAdapter;
     private Handler handler;
+    private TextView currentProgress;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,6 +42,7 @@ public class AlarmRecord extends Fragment {
         alertList = view.findViewById(R.id.alertList);
         read = view.findViewById(R.id.read);
         add = view.findViewById(R.id.add);
+        currentProgress = view.findViewById(R.id.currentProgress);
         alertListAdapter = new AlertListAdapter(view.getContext(), this);
         alertList.setAdapter(alertListAdapter);
         handler = new Handler(message -> {
@@ -47,6 +52,7 @@ public class AlarmRecord extends Fragment {
                switch (message.what) {
                    case 1:
                        notifyDataSetChanged();
+                       currentProgress.setText(message.arg1+"/"+message.arg2);
                        break;
                    case 2:
                        Toast.makeText(context, "开始读取", Toast.LENGTH_SHORT).show();
@@ -68,20 +74,27 @@ public class AlarmRecord extends Fragment {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), AlertAddActivity.class);
-                startActivityForResult(intent, 2);
+                if(Data.t2==null)
+                {
+                    Intent intent = new Intent(getContext(), AlertAddActivity.class);
+                    startActivityForResult(intent, 2);
+                }
+                else
+                {
+                    Toast.makeText(getContext(), "当前任务未停止", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         read.setOnClickListener(view1 -> {
             read.setEnabled(false);
-            new Thread(() -> {
+           Data.t2 =  new Thread(() -> {
                 try {
                     Message m = new Message();
                     m.what = 2;
                     handler.sendMessage(m);
                     int count = alertListAdapter.getCount();
                     for (int i = 0; i < count; i++) {
-                        System.out.println(i);
+//                        System.out.println(i);
 
                         String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataAlerts.get(i).getAddress() + "0001#";
                         if (data.contains("null")) {
@@ -105,17 +118,22 @@ public class AlarmRecord extends Fragment {
                                 }
                                 m = new Message();
                                 m.what = 1;
+                                m.arg1 = i+1;
+                                m.arg2 = count;
                                 handler.sendMessage(m);
                             }
                         }
                     }
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 Message m = new Message();
                 m.what = 3;
                 handler.sendMessage(m);
-            }).start();
+                Data.t2 = null;
+            });
+           Data.t2.start();
         });
     }
 

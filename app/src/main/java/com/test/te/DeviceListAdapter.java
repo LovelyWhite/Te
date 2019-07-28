@@ -49,7 +49,7 @@ public class DeviceListAdapter extends BaseAdapter  {
         {
             holder = (ViewHolder)convertView.getTag();
         }
-        holder.deviceID.setText(Data.devices.get(position).getDeviceID());
+        holder.deviceID.setText(Data.devices.get(position).getDeviceName()+"--"+ Data.devices.get(position).getDeviceID());
         return convertView;
     }
 

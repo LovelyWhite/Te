@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Objects;
 
@@ -64,15 +65,26 @@ public class AlertListAdapter extends BaseAdapter  {
         holder.paraName.setText(Data.dataAlerts.get(position).getpCode()+Data.dataAlerts.get(position).getName());
         holder.cValue.setText(Data.dataAlerts.get(position).getcValue());
         holder.remove.setOnClickListener(view -> {
-            new AlertDialog.Builder(f.getContext())
-                    .setTitle("是否删除？")
-                    .setPositiveButton("确定", (dialogInterface, i1) -> {
-                        Data.aShowed = Data.aShowed.replace(Data.dataAlerts.get(position).getpCode(), "");
-                        Data.mainActivity.commit();
-                        Data.allAlerts.add(Data.dataAlerts.get(position));
-                        Data.dataAlerts.remove(position);
-                        notifyDataSetChanged();
-                    }).create().show();
+
+            if(Data.t2==null)
+            {
+                new AlertDialog.Builder(f.getContext())
+                        .setTitle("是否删除？")
+                        .setPositiveButton("确定", (dialogInterface, i1) -> {
+                            Data.aShowed = Data.aShowed.replace(Data.dataAlerts.get(position).getpCode(), "");
+                            Data.mainActivity.commit();
+                            Data.allAlerts.add(Data.dataAlerts.get(position));
+                            Data.dataAlerts.remove(position);
+                            notifyDataSetChanged();
+                        }).create().show();
+            }
+            else
+            {
+                Toast.makeText(f.getContext(), "当前任务未停止", Toast.LENGTH_SHORT).show();
+            }
+
+
+
         });
         return convertView;
     }

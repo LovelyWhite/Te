@@ -3,6 +3,7 @@ package com.test.te;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
@@ -73,7 +74,6 @@ public class ValueListAdapter extends BaseAdapter {
     }
 
     static class ViewHolder {
-
         TextView paraName;
         EditText cValue;
         Button option;
@@ -87,6 +87,7 @@ public class ValueListAdapter extends BaseAdapter {
             convertView = layoutInflater.inflate(R.layout.c_value, null);
             holder = new ViewHolder();
             holder.paraName = convertView.findViewById(R.id.paraName);
+
             holder.cValue = convertView.findViewById(R.id.cValue);
             holder.option = convertView.findViewById(R.id.rsvOption);
             convertView.setTag(holder);
@@ -99,145 +100,76 @@ public class ValueListAdapter extends BaseAdapter {
         holder.option.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //每次点击需要重新inflate
-                View rsv = f.getLayoutInflater().inflate(R.layout.rsv_option, null);
-                final AlertDialog alertDialog = new AlertDialog.Builder(f.getContext())
-                        .setTitle("选项")
-                        .setView(rsv)
-                        .create();
-                alertDialog.show();
-                final Button readValue, writeValue, readDoubleValue,delete;
-                readValue = rsv.findViewById(R.id.readValue);
-                writeValue = rsv.findViewById(R.id.writeValue);
-                readDoubleValue = rsv.findViewById(R.id.readDoubleValue);
-                delete = rsv.findViewById(R.id.delete);
-                delete.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Data.showed=Data.showed.replace( Data.dataLists.get(position).getpCode(),"");
-                        Data.mainActivity.commit();
-                        Data.allpCode.add(Data.dataLists.get(position));
-                        Data.dataLists.remove(position);
-                        notifyDataSetChanged();
-                        alertDialog.dismiss();
-                    }
-                });
-                if (position == Data.dataLists.size()-1)
-                {
-                    readDoubleValue.setEnabled(false);
-                }
-                else
-                {
-                    readDoubleValue.setEnabled(true);
-                }
-                readValue.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        alertDialog.dismiss();
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataLists.get(position).getAddress() + "0001#";
-                                    if(data.contains("null"))
-                                    {
-                                        Message m = new Message();
-                                        m.what = -3;
-                                        handler.sendMessage(m);
-                                    }
-                                   else
-                                    {
-                                        String result = infoUtils.sendData(data
-                                                , Data.devices.get(Data.cDevicePosition).getSocket()
-                                                ,Data.devices.get(Data.cDevicePosition).getPosition());
-                                        result = result==null?"":result;
-                                        if (result.contains("Drive No online")) {
-                                            Message m = new Message();
-                                            m.what = -2;//设备不在线
-                                            handler.sendMessage(m);
-                                        } else if(!result.equals("")&&result.contains("&")) {
-                                            String a = result.split("&")[1].substring(4, 8);
-                                            String b =Data.dataLists.get(position).getMinUnit();
-                                            b= b==null?"1":b;
-                                            double v = Integer.parseInt(a, 16) * Double.parseDouble(b);
-                                            if(!b.contains("."))
-                                            {
-                                                Data.dataLists.get(position).setcValue("" + (int)v);
-                                            }
-                                            else
-                                            {
-                                                Data.dataLists.get(position).setcValue("" + Math.rint(v));
-                                            }
-                                            Message m = new Message();
-                                            m.what = 1;
-                                            handler.sendMessage(m);
-                                        }
-                                        else
-                                        {
-                                            Message m = new Message();
-                                            m.what = -3;
-                                            handler.sendMessage(m);
-                                        }
-                                    }
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).start();
-                    }
-                });
-                writeValue.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(final View v) {
+                if (Data.t1 == null) {
+                    //每次点击需要重新inflate
+                    View rsv = f.getLayoutInflater().inflate(R.layout.rsv_option, null);
+                    final AlertDialog alertDialog = new AlertDialog.Builder(f.getContext())
+                            .setTitle("选项")
+                            .setView(rsv)
+                            .create();
+                    alertDialog.show();
+                    final Button readValue, writeValue, readDoubleValue, delete;
+                    readValue = rsv.findViewById(R.id.readValue);
+                    writeValue = rsv.findViewById(R.id.writeValue);
+                    readDoubleValue = rsv.findViewById(R.id.readDoubleValue);
+                    delete = rsv.findViewById(R.id.delete);
+                    delete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                        if (finalHolder.cValue.getText().toString().length() != 0) {
+
+                            Data.showed = Data.showed.replace(Data.dataLists.get(position).getpCode(), "");
+                            Data.mainActivity.commit();
+                            Data.allpCode.add(Data.dataLists.get(position));
+                            Data.dataLists.remove(position);
+                            notifyDataSetChanged();
+                            alertDialog.dismiss();
+
+                        }
+                    });
+                    if (position == Data.dataLists.size() - 1) {
+                        readDoubleValue.setEnabled(false);
+                    } else {
+                        readDoubleValue.setEnabled(true);
+                    }
+                    readValue.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
                             alertDialog.dismiss();
                             new Thread(new Runnable() {
                                 @Override
                                 public void run() {
                                     try {
-                                        Data.dataLists.get(position).setcValue(finalHolder.cValue.getText().toString());
-                                        String b =Data.dataLists.get(position).getMinUnit();
-                                        b= b==null?"1":b;
-                                        double v = Double.parseDouble(finalHolder.cValue.getText().toString())/Double.parseDouble(b);
-                                        String value = Integer.toHexString((int) v);
-                                        if (value.length() == 1) {
-                                            value = "000" + value;
-                                        } else if (value.length() == 2) {
-                                            value = "00" + value;
-                                        } else if (value.length() == 3) {
-                                            value = "0" + value;
-                                        }
-                                        String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "06" + Data.dataLists.get(position).getAddress() + value + "#";
-                                        if(data.contains("null"))
-                                        {
+                                        String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "03" + Data.dataLists.get(position).getAddress() + "0001#";
+                                        if (data.contains("null")) {
                                             Message m = new Message();
-                                            m.what = -4;
+                                            m.what = -3;
                                             handler.sendMessage(m);
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             String result = infoUtils.sendData(data
                                                     , Data.devices.get(Data.cDevicePosition).getSocket()
                                                     , Data.devices.get(Data.cDevicePosition).getPosition());
-
-                                            if(result==null)
-                                            {
+                                            result = result == null ? "" : result;
+                                            if (result.contains("Drive No online")) {
                                                 Message m = new Message();
-                                                m.what = -3;
+                                                m.what = -2;//设备不在线
                                                 handler.sendMessage(m);
-                                            }
-                                            else if(result.contains("Drive No online"))
-                                            {
-                                                finalHolder.cValue.setText("");
-                                                Message m = new Message();
-                                                m.what = -2;
-                                                handler.sendMessage(m);
-                                            }
-                                            else
-                                            {
+                                            } else if (!result.equals("") && result.contains("&")) {
+                                                String a = result.split("&")[1].substring(4, 8);
+                                                String b = Data.dataLists.get(position).getMinUnit();
+                                                b = b == null ? "1" : b;
+                                                double v = Integer.parseInt(a, 16) * Double.parseDouble(b);
+                                                if (!b.contains(".")) {
+                                                    Data.dataLists.get(position).setcValue("" + (int) v);
+                                                } else {
+                                                    Data.dataLists.get(position).setcValue("" + Math.rint(v));
+                                                }
                                                 Message m = new Message();
                                                 m.what = 1;
+                                                handler.sendMessage(m);
+                                            } else {
+                                                Message m = new Message();
+                                                m.what = -3;
                                                 handler.sendMessage(m);
                                             }
                                         }
@@ -246,24 +178,79 @@ public class ValueListAdapter extends BaseAdapter {
                                     }
                                 }
                             }).start();
-                        } else {
-                            Message m = new Message();
-                            m.what = -1;
-                            handler.sendMessage(m);
                         }
-                    }
-                });
-                readDoubleValue.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                    });
+                    writeValue.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(final View v) {
 
-                    }
-                });
+                            if (finalHolder.cValue.getText().toString().length() != 0) {
+                                alertDialog.dismiss();
+                                new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            Data.dataLists.get(position).setcValue(finalHolder.cValue.getText().toString());
+                                            String b = Data.dataLists.get(position).getMinUnit();
+                                            b = b == null ? "1" : b;
+                                            double v = Double.parseDouble(finalHolder.cValue.getText().toString()) / Double.parseDouble(b);
+                                            String value = Integer.toHexString((int) v);
+                                            if (value.length() == 1) {
+                                                value = "000" + value;
+                                            } else if (value.length() == 2) {
+                                                value = "00" + value;
+                                            } else if (value.length() == 3) {
+                                                value = "0" + value;
+                                            }
+                                            String data = ">" + Data.devices.get(Data.cDevicePosition).getDeviceID() + "&" + "06" + Data.dataLists.get(position).getAddress() + value + "#";
+                                            if (data.contains("null")) {
+                                                Message m = new Message();
+                                                m.what = -4;
+                                                handler.sendMessage(m);
+                                            } else {
+                                                String result = infoUtils.sendData(data
+                                                        , Data.devices.get(Data.cDevicePosition).getSocket()
+                                                        , Data.devices.get(Data.cDevicePosition).getPosition());
 
+                                                if (result == null) {
+                                                    Message m = new Message();
+                                                    m.what = -3;
+                                                    handler.sendMessage(m);
+                                                } else if (result.contains("Drive No online")) {
+                                                    finalHolder.cValue.setText("");
+                                                    Message m = new Message();
+                                                    m.what = -2;
+                                                    handler.sendMessage(m);
+                                                } else {
+                                                    Message m = new Message();
+                                                    m.what = 1;
+                                                    handler.sendMessage(m);
+                                                }
+                                            }
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }).start();
+                            } else {
+                                Message m = new Message();
+                                m.what = -1;
+                                handler.sendMessage(m);
+                            }
+                        }
+                    });
+                    readDoubleValue.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    });
+
+                } else {
+                    Toast.makeText(f.getContext(), "当前任务未停止", Toast.LENGTH_SHORT).show();
+                }
             }
-
         });
-
         return convertView;
     }
 }

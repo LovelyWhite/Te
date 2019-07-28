@@ -4,9 +4,18 @@ import java.net.Socket;
 
 public class Device {
     Socket socket;
+    String deviceName;
     String deviceID;
     String devicePW;
     String position;
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
 
     public Socket getSocket() {
         return socket;

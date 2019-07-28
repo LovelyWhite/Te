@@ -15,6 +15,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String SQL="create table Devices(" +
                 "deviceID text primary key," +
+                "deviceName text,"+
                 "devicePW text)";
         db.execSQL(SQL);
         SQL="create table Ip(" +
